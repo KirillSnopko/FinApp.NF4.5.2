@@ -19,6 +19,7 @@ namespace FinApp.Entities.Database
             return new UserContext();
         }
 
+        /*
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -27,6 +28,6 @@ namespace FinApp.Entities.Database
                 .HasMany(u => u.depositories)
                 .WithRequired(a => a.user)
                 .HasForeignKey(a => a.UserId);
-        }
+        }*/
     }
 }

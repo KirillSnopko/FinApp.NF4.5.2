@@ -1,0 +1,71 @@
+﻿@model FinApp.Entities.Finance.Depository
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div class="container">
+    <div class="btn-group">
+        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#rename">Rename</button>
+
+        <button type="button" class="btn btn-primary">Remittance</button>
+        <button type="button" class="btn btn-primary">Lend</button>
+        <button type="button" class="btn btn-primary">Add</button>
+
+        <button type="button" class="btn btn-primary">Spend</button>
+    </div>
+</div>
+
+<p>This place for the charts</p>
+
+
+<!-- Rename -->
+<div class="modal fade" id="rename" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h4 class="modal-title">New name</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.id)
+
+                    <div class="form-group">
+                        <div class="col-xs-2">
+                            @Html.EditorFor(model => model.name, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.name, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Save" class="btn btn-success" />
+                        </div>
+                    </div>
+
+                }
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+

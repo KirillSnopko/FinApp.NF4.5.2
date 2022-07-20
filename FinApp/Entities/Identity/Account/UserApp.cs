@@ -10,7 +10,7 @@ namespace FinApp.Entities.Identity.Account
     public class UserApp : IdentityUser
     {
         public ICollection<Credit> credits { get; set; }
-        public virtual ICollection<Depository> depositories { get; set; }
+        public ICollection<Depository> depositories { get; set; }
         public ICollection<FinanceOperation> operations { get; set; }
 
         public UserApp()

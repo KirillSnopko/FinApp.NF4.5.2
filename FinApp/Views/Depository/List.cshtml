@@ -1,34 +1,56 @@
 ﻿@model IEnumerable<FinApp.Entities.Finance.Depository>
+@using FinApp.Entities.Finance
 
 @{
     ViewBag.Title = "List";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>List</h2>
+<div class="d-inline-block">
+    <h4>Depositories <span class="badge badge-secondary">@Model.Count()</span></h4>
+    @Html.ActionLink(" ", "Create")
+    @Html.ActionLink(" ", "listView", null, new { @style = "background-image:url('~/image/add.png')" })
+</div>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Value</th>
+            <th>Currency</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Depository dep in Model)
+        {
+            <tr>
+                <td>@dep.name</td>
+                <td>@dep.typeDep</td>
+                <td>@dep.amount</td>
+                <td>@dep.typeMoney</td>
+                <td>
+                    @Html.ActionLink("Details", "Details", new { id = dep.id }, new { @class = "btn btn-secondary " })
+                </td>
+                <td align="center">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                            Dropdown Example
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">HTML</a></li>
+                            <li><a href="#">CSS</a></li>
+                            <li><a href="#">JavaScript</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-success" })
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.name)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.name)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.id })
-        </td>
-    </tr>
-}
-
-</table>

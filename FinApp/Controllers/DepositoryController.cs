@@ -6,6 +6,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Helpers;
@@ -13,6 +14,7 @@ using System.Web.Mvc;
 
 namespace FinApp.Controllers
 {
+    [Authorize]
     public class DepositoryController : Controller
     {
         private UserManagerImpl UserManager
@@ -22,33 +24,49 @@ namespace FinApp.Controllers
                 return HttpContext.GetOwinContext().GetUserManager<UserManagerImpl>();
             }
         }
+        private UserContext context
+        {
+            get
+            {
+                return HttpContext.GetOwinContext().GetUserManager<UserContext>();
+            }
+        }
 
-        [Authorize]
+        [HttpGet]
         public ActionResult List()
         {
-            UserContext context = new UserContext();
-
-            UserApp user = UserManager.FindById(User.Identity.GetUserId());
-            return View(user.depositories.ToList());
-            //return Json(user.depositories.ToList());
+            var id = User.Identity.GetUserId();
+            UserApp user = context.Users.Where(i => i.Id == id).Include(i => i.depositories).First();// .ToList().Find(i => i.Id == id);
+            return View(user.depositories);
         }
+
 
         [HttpGet]
         public ActionResult Create()
         {
             return View();
         }
+
+
         [HttpPost]
-        public ActionResult Create(TypeDep tDep, TypeMoney tMoney, string name)
+        public ActionResult Create(TypeDep tDep, TypeMoney tMoney, string name, int amount)
         {
             UserApp userApp = UserManager.FindByName(User.Identity.Name);
-            Depository depository = new Depository { user = userApp, typeDep = tDep, typeMoney = tMoney, name = name };
+            Depository depository = new Depository { user = userApp, typeDep = tDep, typeMoney = tMoney, name = name, amount = amount };
             userApp.depositories.Add(depository);
-            //UserManager.Update(userApp);
-            UserContext.Create().SaveChanges();
-
-            return RedirectToAction("Depository");
+            context.SaveChanges();
+            return RedirectToAction("List");
         }
+
+        [HttpGet]
+        public ActionResult Details(int id)
+        {
+            var idUser = User.Identity.GetUserId();
+            Depository current = context.Users.Where(i => i.Id == idUser).Include(i => i.depositories).First().depositories.Where(i => i.id == id).First();
+            return View(current);
+        }
+
+
 
 
     }

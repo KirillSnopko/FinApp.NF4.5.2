@@ -9,24 +9,22 @@ namespace FinApp.Entities.Finance
 {
     public class Depository
     {
-        [Display(Name = "id")]
         public int id { get; set; }
 
-        [Display(Name = "Name")]
         [Required]
         public string name { get; set; }
-        public string UserId { get; set; }
+
         public UserApp user { get; set; }
 
-        [Display(Name = "Type")]
         [Required]
         [EnumDataType(typeof(TypeDep))]
         public TypeDep typeDep { get; set; }
 
-        [Display(Name = "Currency")]
         [Required]
         [EnumDataType(typeof(TypeMoney))]
         public TypeMoney typeMoney { get; set; }
+
+        public int amount { get; set; }
 
     }
 

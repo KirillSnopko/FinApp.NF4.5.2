@@ -1,0 +1,7 @@
+﻿﻿.button_setting {
+    background: url('../image/setting.png');
+    width: 40px;
+    height: 40px;
+    display:inline-block;
+    border: 0;
+}

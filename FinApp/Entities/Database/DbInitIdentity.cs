@@ -10,7 +10,7 @@ using System.Web;
 
 namespace FinApp.Entities.Database
 {
-    public class DbInitIdentity : DropCreateDatabaseIfModelChanges<UserContext>
+    public class DbInitIdentity :DropCreateDatabaseIfModelChanges<UserContext>
     {
         protected override void Seed(UserContext context)
         {

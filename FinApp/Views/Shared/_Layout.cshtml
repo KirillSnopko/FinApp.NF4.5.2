@@ -5,8 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/image.css" rel="stylesheet" type="text/css" />
+
     <script src="~/Scripts/jquery-3.6.0.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/umd/popper.min.js"></script>
+
 
     <style>
         /* Remove the navbar's default margin-bottom and rounded borders */
@@ -29,7 +34,6 @@
 
         /* Set black background color, white text and some padding */
         footer {
-          
             padding: 15px;
         }
     </style>
@@ -41,13 +45,28 @@
             <img src="/image/logo.png" width="40" height="40" class="d-inline-block align-top" alt="">
             Financial Assistant
         </a>
-        <a href="Account/Login" class="btn btn-info">Login</a>
-
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="~/image/account.png" height="40" width="40">
+                    <a> @User.Identity.Name</a>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="#">Settings</a>
+                    <a class="dropdown-item" href="Account/Logout">Logout</a>
+                </div>
+            </div>
+        }
+        else
+        {
+            <a href="Account/Login" class="btn btn-success">Login</a>
+        }
     </nav>
 
 
     <div class="container-fluid text-center">
-        <div class="row content bg-white" >
+        <div class="row content bg-white">
             <div class="col-sm-2 sidenav bg-light float-left">
                 <p><a href="/Depository/List" class="btn btn-primary btn-block">Depositories</a></p>
                 <p><a href="#" class="btn btn-primary btn-block">Credits</a></p>
@@ -64,7 +83,7 @@
     </div>
 
 
-   
+
 
 
 </body>
