@@ -66,6 +66,28 @@ namespace FinApp.Controllers
             return View(current);
         }
 
+        [HttpPost]
+        public ActionResult Rename(string name, int id)
+        {
+            if (name != null || name.Trim() != "")
+            {
+                var idUser = User.Identity.GetUserId();
+                context.Users.Where(i => i.Id == idUser).Include(i => i.depositories).First().depositories.Where(i => i.id == id).Single().name = name;
+                context.SaveChanges();
+            }
+            return RedirectToAction($"/Details/{id}", id);
+        }
+
+        [HttpGet]
+        public ActionResult Count()
+        {
+            var idUser = User.Identity.GetUserId();
+            int dep_count = context.Users.Where(i => i.Id == idUser).Include(i => i.depositories).First().depositories.Count();
+            int credit_count = context.Users.Where(i => i.Id == idUser).Include(i => i.credits).First().credits.Count();
+
+            return Json(new { dep_count, credit_count }, JsonRequestBehavior.AllowGet);
+        }
+
 
 
 

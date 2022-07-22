@@ -72,6 +72,13 @@ namespace FinApp.Controllers
             return View(details);
         }
 
+        [Authorize]
+        public ActionResult Logout()
+        {
+            AuthManager.SignOut();
+            return Redirect("/");
+        }
+
 
     }
 }

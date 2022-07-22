@@ -4,21 +4,21 @@
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+<h2>@Model.name</h2>
 
 <div class="container">
     <div class="btn-group">
         <button type="button" class="btn btn-info" data-toggle="modal" data-target="#rename">Rename</button>
+        <button type="button" class="btn btn-light">Remittance</button>
+        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#operation">New operation</button>
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete">Delete</button>
 
-        <button type="button" class="btn btn-primary">Remittance</button>
-        <button type="button" class="btn btn-primary">Lend</button>
-        <button type="button" class="btn btn-primary">Add</button>
-
-        <button type="button" class="btn btn-primary">Spend</button>
     </div>
 </div>
 
-<p>This place for the charts</p>
+<strong>Charts</strong>
+<br/>
+<strong>History</strong>
 
 
 <!-- Rename -->
@@ -45,16 +45,93 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="col-md-offset-2 col-md-10">
-                            <input type="submit" value="Save" class="btn btn-success" />
+                        <div class="col-md-offset-2 col-md-10" style="display: flex;">
+                            <input type="submit" value="Save" class="btn btn-success" formaction="../Rename" />
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
                     </div>
-
                 }
+            </div>
+        </div>
+    </div>
+</div>
 
+<!--  (idDepository=.., isSpending=.., amountOfMoney=.., comment=..)-->
+<div class="modal fade" id="operation" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h4 class="modal-title">New financial operation</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+                    <!--idDepository-->
+                    <input type="hidden" name="idDepository" value="@Model.id" />
+                    <!--amount of money-->
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">$</span>
+                        </div>
+                        <input type="text" class="form-control" placeholder="Amount of money" name="amountOfMoney">
+                    </div>
+
+                    <!--Comment for operation-->
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Text</span>
+                        </div>
+                        <input type="text" class="form-control" placeholder="Inter comment" name="comment">
+                    </div>
+                    <!--choosing between adding and spending-->
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" class="custom-control-input" id="customRadio" name="isSpanding" value="false">
+                        <label class="custom-control-label" for="customRadio">Add</label>
+                    </div>
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" class="custom-control-input" id="customRadio2" name="isSpanding" value="true" checked>
+                        <label class="custom-control-label" for="customRadio2">Spend</label>
+                    </div>
+                    <br />
+                    <br />
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10" style="display: flex;">
+                            <input type="submit" value="Push" class="btn btn-success" formaction="../Spend" />
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                }
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                In stock @Model.amount @Model.typeMoney
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete -->
+<div class="modal fade" id="delete" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <strong class="modal-title">Please, confirm this action.</strong>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="idDepository" value="@Model.id" />
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10" style="display: flex;">
+                            <input type="submit" value="Confirm" class="btn btn-danger" formaction="../Delete" />
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </div>

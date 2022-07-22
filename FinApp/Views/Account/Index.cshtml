@@ -4,36 +4,11 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+This application is being developed as my own tool to control and analyze my family's money transactions.
+ I agree, there are many such applications, but if I can create one, then why not?
+After registration, you will be able to create, edit and delete deposits and loans.
+ Also, this web application records every financial transaction in a history, after which you can view transactions and statistical charts.
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Email)
-        </th>
-       
-        <th>
-            @Html.DisplayNameFor(model => model.UserName)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-             
-        <td>
-            @Html.DisplayFor(modelItem => item.UserName)
-        </td>
-       
-    </tr>
-}
-
-</table>
 
 

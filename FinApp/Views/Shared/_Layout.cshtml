@@ -11,7 +11,8 @@
     <script src="~/Scripts/jquery-3.6.0.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
     <script src="~/Scripts/umd/popper.min.js"></script>
-
+    <script async src="https://s.fx-w.io/widgets/exchange-rates/latest.js"></script>
+    <script async src="https://s.fx-w.io/widgets/currency-converter/latest.js"></script>
 
     <style>
         /* Remove the navbar's default margin-bottom and rounded borders */
@@ -45,8 +46,11 @@
             <img src="/image/logo.png" width="40" height="40" class="d-inline-block align-top" alt="">
             Financial Assistant
         </a>
+
         @if (User.Identity.IsAuthenticated)
         {
+            <a href="/Depository/List" class="btn btn-info" role="button"> Depositories <span class="badge"> <div id="dep_count"></div> </span></a>
+            <a href="#" class="btn btn-info" role="button">Credit <span class="badge"><div id="credit_count"></div></span></a>
             <div class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img src="~/image/account.png" height="40" width="40">
@@ -60,20 +64,21 @@
         }
         else
         {
+            <a href="/Depository/List" class="btn btn-info disabled" role="button">Depositories</a>
+            <a href="#" class="btn btn-info disabled" role="button">Credit</a>
             <a href="Account/Login" class="btn btn-success">Login</a>
         }
     </nav>
 
 
     <div class="container-fluid text-center">
-        <div class="row content bg-white">
-            <div class="col-sm-2 sidenav bg-light float-left">
-                <p><a href="/Depository/List" class="btn btn-primary btn-block">Depositories</a></p>
-                <p><a href="#" class="btn btn-primary btn-block">Credits</a></p>
-                <p><a href="#" class="btn btn-primary btn-block">History</a></p>
-                <p><a href="#" class="btn btn-primary btn-block">Statictics</a></p>
-                <p><a href="#" class="btn btn-primary btn-block">Settings</a></p>
 
+        <div class="row content bg-white">
+            <!--Financial widgets-->
+            <div class="col-sm-2 sidenav bg-light float-left">
+                <fxwidget-er inverse="false" amount="1" decimals="2" large="false" shadow="true" symbol="true" flag="true" changes="true" grouping="true" border="false" main-curr="BYN" sel-curr="RUB,USD,EUR," background-color="#9bddff" border-radius="0.35"></fxwidget-er>
+                <br />
+                <fxwidget-cc amount="100" decimals="2" large="false" shadow="true" symbol="false" grouping="true" border="false" from="USD" to="EUR" background-color="#89cff0" border-radius="0.35" pop-curr="BYN,RUB,USD,EUR"></fxwidget-cc>
             </div>
 
             <div class="col-sm-8 text-left">
@@ -81,10 +86,19 @@
             </div>
         </div>
     </div>
+    <script>
+        $(window).on('load', function () {
+            //  Boolean x = User.Identity.IsAuthenticated.ToString().ToLower();
+            //  if (x) {
 
-
-
-
+            $.get("Depository/Count", {},
+                function (counts) {
+                    $('#dep_count').html(counts['dep_count']);
+                    $('#credit_count').html(counts['credit_count']);
+                }
+            );
+        });
+    </script>
 
 </body>
 </html>
