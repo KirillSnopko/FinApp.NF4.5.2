@@ -4,21 +4,59 @@
     ViewBag.Title = "Details";
 }
 
-<h2>@Model.name</h2>
-
+<div>
+    <h2 class="d-inline p-2">@Model.name</h2><span class="badge badge-primary">@Model.amount @Model.typeMoney</span>
+</div>
 <div class="container">
     <div class="btn-group">
         <button type="button" class="btn btn-info" data-toggle="modal" data-target="#rename">Rename</button>
         <button type="button" class="btn btn-light">Remittance</button>
         <button type="button" class="btn btn-info" data-toggle="modal" data-target="#operation">New operation</button>
         <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete">Delete</button>
-
     </div>
 </div>
 
 <strong>Charts</strong>
-<br/>
-<strong>History</strong>
+<div id="charts"></div>
+<br />
+<button data-toggle="collapse" data-target="#history">History</button>
+
+<div id="history" class="collapse"></div>
+
+<script>
+    $(window).on('load', function () {
+        $.get("../HistoryById/@Model.id", {},
+            function (history) {
+                var table = $('<table class="table"><tr><th>Date</th><th>Comment</th><th>Value</th></tr>');
+               $(history).each(function (index, item) {
+
+                    var amountOfMoney = item.amountOfMoney;
+                   var comment = item.comment;
+                   var date = new Date(parseInt(item.created.substr(6)));
+                   var isSpending = item.isSpending;
+                   if (isSpending) {
+                       table.append('<tr class="table-danger"><td>' + date + '<td>' + comment + '</td><td><strong> -' + amountOfMoney + '</strong>@Model.typeMoney</td ></tr >');
+                   } else {
+                       table.append('<tr class="table-success"><td>' + date + '<td>' + comment + '</td><td><strong> +' + amountOfMoney + '</strong>@Model.typeMoney</td ></tr >');
+                   }
+
+
+               });
+                table.append('</table>');
+                $('#history').html(table);
+
+
+            }
+        );
+    });
+
+
+
+
+
+</script>
+
+
 
 
 <!-- Rename -->
@@ -75,7 +113,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">$</span>
                         </div>
-                        <input type="text" class="form-control" placeholder="Amount of money" name="amountOfMoney">
+                        <input type="text" class="form-control" placeholder="Amount of money (rr.cc)" name="amountOfMoney">
                     </div>
 
                     <!--Comment for operation-->
@@ -83,15 +121,15 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">Text</span>
                         </div>
-                        <input type="text" class="form-control" placeholder="Inter comment" name="comment">
+                        <input type="text" class="form-control" placeholder="Enter comment" name="comment">
                     </div>
                     <!--choosing between adding and spending-->
                     <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" class="custom-control-input" id="customRadio" name="isSpanding" value="false">
+                        <input type="radio" class="custom-control-input" id="customRadio" name="isSpending" value="false">
                         <label class="custom-control-label" for="customRadio">Add</label>
                     </div>
                     <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" class="custom-control-input" id="customRadio2" name="isSpanding" value="true" checked>
+                        <input type="radio" class="custom-control-input" id="customRadio2" name="isSpending" value="true" checked>
                         <label class="custom-control-label" for="customRadio2">Spend</label>
                     </div>
                     <br />
@@ -99,7 +137,7 @@
 
                     <div class="form-group">
                         <div class="col-md-offset-2 col-md-10" style="display: flex;">
-                            <input type="submit" value="Push" class="btn btn-success" formaction="../Spend" />
+                            <input type="submit" value="Push" class="btn btn-success" formaction="../Change" />
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
                     </div>

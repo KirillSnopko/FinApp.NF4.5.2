@@ -86,19 +86,9 @@
             </div>
         </div>
     </div>
-    <script>
-        $(window).on('load', function () {
-            //  Boolean x = User.Identity.IsAuthenticated.ToString().ToLower();
-            //  if (x) {
-
-            $.get("Depository/Count", {},
-                function (counts) {
-                    $('#dep_count').html(counts['dep_count']);
-                    $('#credit_count').html(counts['credit_count']);
-                }
-            );
-        });
-    </script>
+    @using System.Web.Optimization
+    @Scripts.Render("~/Scripts/my/badges.js")
+    @RenderSection("scripts", required: false)
 
 </body>
 </html>

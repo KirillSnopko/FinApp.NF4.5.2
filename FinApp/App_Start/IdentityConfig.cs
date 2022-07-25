@@ -13,6 +13,7 @@ namespace FinApp.App_Start
         public void Configuration(IAppBuilder app)
         {
             app.CreatePerOwinContext<UserContext>(UserContext.Create);
+            app.CreatePerOwinContext<FinContext>(FinContext.Create);
             app.CreatePerOwinContext<UserManagerImpl>(UserManagerImpl.Create);
             app.CreatePerOwinContext<RoleManagerImpl>(RoleManagerImpl.Create);
 

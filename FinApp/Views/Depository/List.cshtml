@@ -8,8 +8,6 @@
 
 <div class="d-inline-block">
     <h4>Depositories <span class="badge badge-secondary">@Model.Count()</span></h4>
-    @Html.ActionLink(" ", "Create")
-    @Html.ActionLink(" ", "listView", null, new { @style = "background-image:url('~/image/add.png')" })
 </div>
 <table class="table table-striped">
     <thead>
@@ -89,7 +87,7 @@
                     <br />
                     <div class="form-group">
                         <div class="col-md-offset-2 col-md-10" style="display: flex;">
-                            <input type="submit" value="Create" class="btn btn-success" formaction="../Spend" />
+                            <input type="submit" value="Create" class="btn btn-success" formaction="../Depository/Create" />
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
                     </div>

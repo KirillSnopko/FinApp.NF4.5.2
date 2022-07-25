@@ -14,7 +14,8 @@ namespace FinApp.Entities.Finance
         [Required]
         public string name { get; set; }
 
-        public UserApp user { get; set; }
+        //public UserApp user { get; set; }
+        public string idUser { get; set; }
 
         [Required]
         [EnumDataType(typeof(TypeDep))]
@@ -24,7 +25,7 @@ namespace FinApp.Entities.Finance
         [EnumDataType(typeof(TypeMoney))]
         public TypeMoney typeMoney { get; set; }
 
-        public int amount { get; set; }
+        public double amount { get; set; }
 
     }
 

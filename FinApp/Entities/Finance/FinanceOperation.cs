@@ -7,7 +7,7 @@ namespace FinApp.Entities.Finance
     public class FinanceOperation
     {
         public int id { get; set; }
-        public UserApp user { get; set; }
+        public string idUser { get; set; }
         public int idDepository { get; set; }
         public double amountOfMoney { get; set; }
         public string comment { get; set; }

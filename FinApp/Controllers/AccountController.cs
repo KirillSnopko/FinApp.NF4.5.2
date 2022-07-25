@@ -17,7 +17,7 @@ namespace FinApp.Controllers
         {
             get
             {
-               
+
                 return HttpContext.GetOwinContext().GetUserManager<UserManagerImpl>();
             }
         }
@@ -32,7 +32,7 @@ namespace FinApp.Controllers
 
         public ActionResult Index()
         {
-            return View(UserManager.Users);
+            return View();
         }
 
         public ActionResult login()
@@ -78,7 +78,5 @@ namespace FinApp.Controllers
             AuthManager.SignOut();
             return Redirect("/");
         }
-
-
     }
 }
