@@ -1,17 +1,12 @@
 ﻿using FinApp.Entities.Database;
 using FinApp.Entities.Finance;
-using FinApp.Entities.Identity.Account;
-using FinApp.Entities.Identity.Managers;
-using FinApp.services;
+using FinApp.service;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Globalization;
-using System.Linq;
 using System.Web;
-using System.Web.Helpers;
 using System.Web.Mvc;
 
 namespace FinApp.Controllers
@@ -19,43 +14,30 @@ namespace FinApp.Controllers
     [Authorize]
     public class DepositoryController : Controller
     {
-        private FinContext financeContext
-        {
-            get
-            {
-                return HttpContext.GetOwinContext().GetUserManager<FinContext>();
-            }
-        }
-
-        private OperationService operationService = new OperationService();
+        private FinanceService financeService = new FinanceService();
 
 
         [HttpGet]
         public ActionResult List()
         {
             var id = User.Identity.GetUserId();
-            return View(financeContext.depositories.Where(i => i.idUser == id).ToList());
+            return View(financeService.depositoryRepo.depositoriesByUserId(id));
         }
-
 
         [HttpPost]
         public ActionResult Create(TypeDep tDep, TypeMoney tMoney, string name, double amount)
         {
             var id = User.Identity.GetUserId();
             Depository depository = new Depository { idUser = id, typeDep = tDep, typeMoney = tMoney, name = name, amount = amount };
-            financeContext.depositories.Add(depository);
-            financeContext.SaveChanges();
+            financeService.depositoryRepo.add(depository);
             return RedirectToAction("List");
         }
-
-
 
         [HttpGet]
         public ActionResult Details(int id)
         {
             var idUser = User.Identity.GetUserId();
-            Depository current = financeContext.depositories.Where(i => i.idUser == idUser && i.id == id).First();
-            return View(current);
+            return View(financeService.depositoryRepo.get(id));
         }
 
         [HttpPost]
@@ -63,9 +45,7 @@ namespace FinApp.Controllers
         {
             if (name != null || name.Trim() != "")
             {
-                var idUser = User.Identity.GetUserId();
-                financeContext.depositories.First(i => i.id == id).name = name;
-                financeContext.SaveChanges();
+                financeService.depositoryRepo.rename(name, id);
             }
             return RedirectToAction($"/Details/{id}", id);
         }
@@ -74,8 +54,8 @@ namespace FinApp.Controllers
         public ActionResult Count()
         {
             var idUser = User.Identity.GetUserId();
-            int dep_count = financeContext.depositories.Where(i => i.idUser == idUser).Count();
-            int credit_count = financeContext.credits.Where(i => i.idUser == idUser).Count();
+            int dep_count = financeService.depositoryRepo.count(idUser);
+            int credit_count = financeService.creditRepo.count(idUser);
             return Json(new { dep_count, credit_count }, JsonRequestBehavior.AllowGet);
         }
 
@@ -83,8 +63,7 @@ namespace FinApp.Controllers
         public ActionResult Delete(int id)
         {
             var idUser = User.Identity.GetUserId();
-            financeContext.depositories.Where(i => i.idUser == idUser).ToList().RemoveAt(id);
-            financeContext.SaveChanges();
+            financeService.depositoryRepo.delete(id);
             return RedirectToAction("/List");
         }
 
@@ -93,27 +72,15 @@ namespace FinApp.Controllers
         {
             var idUser = User.Identity.GetUserId();
             double amount = Double.Parse(amountOfMoney, CultureInfo.InvariantCulture);
-            var depository = financeContext.depositories.Where(i => i.idUser == idUser && i.id == idDepository).First();
-            if (isSpending)
-            {
-                if (depository.amount >= amount)
-                {
-                    depository.amount -= amount;
-                }
-            }
-            else
-            {
-                depository.amount += amount;
-            }
-            financeContext.SaveChanges();
-            operationService.SaveToHistory(idDepository, isSpending, amount, comment, idUser);
+            financeService.depositoryRepo.change(idDepository, isSpending, amount);
+            financeService.operationRepo.SaveToHistory(idDepository, isSpending, amount, comment, idUser);
             return RedirectToAction($"/Details/{idDepository}", idDepository);
         }
 
         [HttpGet]
         public ActionResult HistoryById(int id)
         {
-            List<FinanceOperation> history = operationService.getById(id);
+            List<FinanceOperation> history = financeService.operationRepo.getById(id);
             return Json(history, JsonRequestBehavior.AllowGet);
         }
     }

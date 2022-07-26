@@ -6,16 +6,15 @@ using System.Linq;
 using System.Web;
 using Microsoft.AspNet.Identity.Owin;
 
-namespace FinApp.services
+namespace FinApp.repo
 {
-    public class OperationService : IOperationService
+    public class OperationRepo : IOperationRepo
     {
-        private FinContext financeContext
+        public FinContext financeContext { get; set; }
+
+        public OperationRepo(FinContext financeContext)
         {
-            get
-            {
-                return HttpContext.Current.GetOwinContext().GetUserManager<FinContext>();
-            }
+            this.financeContext = financeContext;
         }
 
         public List<FinanceOperation> getById(int idDepository)

@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FinApp.services
+namespace FinApp.repo
 {
-    public interface IOperationService
+    public interface IOperationRepo
     {
         void SaveToHistory(int idDepository, bool isSpending, double amountOfMoney, string comment, string idUser);
         List<FinanceOperation> getById(int idDepository);
