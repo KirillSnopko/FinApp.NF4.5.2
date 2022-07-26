@@ -58,8 +58,8 @@
                     <a> @User.Identity.Name</a>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="#">Settings</a>
                     <a class="dropdown-item" href="Account/Logout">Logout</a>
+                    <button type="button" class="dropdown-item" data-toggle="modal" data-target="#settings">Settings</button>
                 </div>
             </div>
         }
@@ -91,7 +91,75 @@
     @Scripts.Render("~/Scripts/my/badges.js")
     @RenderSection("scripts", required: false)
 
+    <!-- Settings -->
+    <div class="modal fade" id="settings" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!--Header-->
+                <div class="modal-header">
+                    <h6 class="modal-title">Settings</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <!--Body-->
+                <div class="modal-body">
+                    <kbd>Rename</kbd>
+                    <br />
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken();
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Name</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="@User.Identity.Name" name="name">
+                            <input type="submit" value="Rename" class="btn btn-outline-danger" formaction="Account/Rename" />
+                        </div>
+                    }
 
+                    <kbd>Change password</kbd>
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken();
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Old</span>
+                            </div>
+                            <input type="password" class="form-control" placeholder="" name="old_password">
+
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">New</span>
+                            </div>
+                            <input type="password" class="form-control" placeholder="" name="new_password">
+                            <input type="submit" value="Confirm" class="btn btn-outline-danger" formaction="Account/ChangePassword" />
+                        </div>
+                    }
+
+                    <kbd>Remove account</kbd>
+                    <br />
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken();
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Password</span>
+                            </div>
+                            <input type="password" class="form-control" placeholder="" name="name">
+                            <input type="submit" value="Remove" class="btn btn-outline-danger" formaction="Account/Remove" />
+                        </div>
+                    }
+
+                </div>
+                <!--Footer-->
+                <div class="modal-footer">
+
+                </div>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>
