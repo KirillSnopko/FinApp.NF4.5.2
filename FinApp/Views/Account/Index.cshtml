@@ -11,4 +11,105 @@ After registration, you will be able to create, edit and delete deposits and loa
 
 
 
+<!-- Login -->
+<div class="modal fade" id="login" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <!--Header-->
+            <div class="modal-header">
+                <h6 class="modal-title">Please login to your account.</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <!--Body-->
+            <div class="modal-body">
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken();
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Login</span>
+                        </div>
+                        <input type="text" class="form-control" placeholder="Enter login" name="name">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Password</span>
+                        </div>
+                        <input type="password" class="form-control" placeholder="Enter password" name="password">
+                    </div>
+                    <div class="col-md-offset-2 col-md-10" style="display: flex;">
+                        <input type="submit" value="SIGN IN" class="btn btn-primary" formaction="Account/Login" />
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                }
+            </div>
+            <!--Footer-->
+            <div class="modal-footer">
+                <h6 class="modal-title">Don't have an account?</h6>
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#registration">Click</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Registration -->
+<div class="modal fade" id="registration" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <!--Header-->
+            <div class="modal-header">
+                <h6 class="modal-title">Sign up</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <!--Body-->
+            <div class="modal-body">
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken();
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Name</span>
+                        </div>
+                        <input type="text" class="form-control" placeholder="Enter name" name="name">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Email</span>
+                        </div>
+                        <input type="email" class="form-control" placeholder="Enter email" name="email">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Password</span>
+                        </div>
+                        <input type="password" class="form-control" placeholder="Enter password" name="password">
+                    </div>
+
+                    <div class="col-md-offset-2 col-md-10" style="display: flex;">
+                        <input type="submit" value="REGISTER" class="btn btn-primary" formaction="Account/Register" />
+                    </div>
+                }
+            </div>
+            <!--Footer-->
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
 

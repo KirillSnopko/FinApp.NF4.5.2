@@ -72,6 +72,26 @@ namespace FinApp.Controllers
             return View(details);
         }
 
+        [HttpPost]
+        public ActionResult Register(string name, string password, string email)
+        {
+            if (name.Trim() != "" && password.Trim() != "" && email.Trim() != "")
+            {
+                UserApp user = new UserApp { UserName = name, Email = email };
+                IdentityResult result = UserManager.Create(user, password);
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return Json("error");
+                }
+            }
+            return Json("error");
+        }
+
         [Authorize]
         public ActionResult Logout()
         {

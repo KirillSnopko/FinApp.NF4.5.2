@@ -67,7 +67,7 @@
         {
             <a href="/Depository/List" class="btn btn-info disabled" role="button">Depositories</a>
             <a href="#" class="btn btn-info disabled" role="button">Credit</a>
-            <a href="Account/Login" class="btn btn-success">Login</a>
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#login">Login</button>
         }
     </nav>
 
@@ -90,6 +90,8 @@
     @using System.Web.Optimization
     @Scripts.Render("~/Scripts/my/badges.js")
     @RenderSection("scripts", required: false)
+
+
 
 </body>
 </html>
