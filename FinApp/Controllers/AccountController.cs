@@ -31,15 +31,19 @@ namespace FinApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(string name, string password)
         {
-            try
+            if (name.Trim() != string.Empty && name != null && password != null && password.Trim() != string.Empty)
             {
-                accountService.login(name, password);
-                return Redirect("/");
+                try
+                {
+                    accountService.login(name, password);
+                    return Redirect("/");
+                }
+                catch (AccountServiceException ex)
+                {
+                    return Json(ex.Message);
+                }
             }
-            catch (AccountServiceException ex)
-            {
-                return Json(ex.Message);
-            }
+            else { return Json("Invalid input"); }
         }
 
         [HttpPost]
@@ -47,7 +51,7 @@ namespace FinApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Register(string name, string password, string email)
         {
-            if (name.Trim() != string.Empty && password.Trim() != string.Empty && email.Trim() != string.Empty)
+            if (name.Trim() != string.Empty && password.Trim() != string.Empty && email.Trim() != string.Empty && name != null && password != null && email != null)
             {
                 try
                 {
@@ -76,15 +80,22 @@ namespace FinApp.Controllers
         {
             string name = User.Identity.GetUserName();
             string id = User.Identity.GetUserId();
-            try
+            if (password.Trim() != string.Empty && password != null)
             {
-                accountService.removeAccount(password, name);
-                financeService.cleanUpAccountById(id);
-                return RedirectToAction("Logout");
+                try
+                {
+                    accountService.removeAccount(password, name);
+                    financeService.cleanUpAccountById(id);
+                    return RedirectToAction("Logout");
+                }
+                catch (AccountServiceException ex)
+                {
+                    return Json(ex.Message);
+                }
             }
-            catch (AccountServiceException ex)
+            else
             {
-                return Json(ex.Message);
+                return Json("invalid input");
             }
         }
 
@@ -93,7 +104,7 @@ namespace FinApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Rename(string name)
         {
-            if (name.Trim() != string.Empty)
+            if (name.Trim() != string.Empty && name != null)
             {
                 var idUser = User.Identity.GetUserId();
                 try
@@ -115,11 +126,18 @@ namespace FinApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ChangePassword(string old_password, string new_password)
         {
-            if (new_password.Trim() != string.Empty)
+            if (new_password.Trim() != string.Empty && old_password.Trim() != string.Empty && new_password != null && old_password != null)
             {
-                var idUser = User.Identity.GetUserId();
-                accountService.changePassword(old_password, new_password, idUser);
-                return RedirectToAction("Index");
+                try
+                {
+                    var userName = User.Identity.Name;
+                    accountService.changePassword(old_password, new_password, userName);
+                    return RedirectToAction("Index");
+                }
+                catch (AccountServiceException ex)
+                {
+                    return Json(ex.Message);
+                }
             }
             return Json("invalid input");
         }

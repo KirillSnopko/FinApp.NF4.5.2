@@ -30,9 +30,22 @@ namespace FinApp.service
         }
 
 
-        public void changePassword(string old_password, string new_password, string idUser)
+        public void changePassword(string old_password, string new_password, string userName)
         {
-            UserManager.ChangePassword(idUser, old_password, new_password);
+            UserApp user = UserManager.Find(userName, old_password);
+            if (user != null)
+            {
+                user.PasswordHash = UserManager.PasswordHasher.HashPassword(new_password);
+                var result = UserManager.Update(user);
+                if (!result.Succeeded)
+                {
+                    throw new AccountServiceException("server error");
+                }
+            }
+            else
+            {
+                throw new AccountServiceException("invalid current password");
+            }
         }
 
         public void login(string username, string password)
@@ -73,9 +86,9 @@ namespace FinApp.service
         public void removeAccount(string password, string userName)
         {
             UserApp user = UserManager.Find(userName, password);
-            if(user != null)
+            if (user != null)
             {
-               UserManager.Delete(user);
+                UserManager.Delete(user);
             }
             else
             {
