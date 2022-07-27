@@ -11,30 +11,15 @@ using FinApp.Entities.Finance;
 using System.Collections.Generic;
 using FinApp.service;
 using System.Web.Security;
+using FinApp.service.ifaces;
+using FinApp.Exceptions;
 
 namespace FinApp.Controllers
 {
     public class AccountController : Controller
     {
-        private UserManagerImpl UserManager
-        {
-            get
-            {
-
-                return HttpContext.GetOwinContext().GetUserManager<UserManagerImpl>();
-            }
-        }
-
-        private IAuthenticationManager AuthManager
-        {
-            get
-            {
-                return HttpContext.GetOwinContext().Authentication;
-            }
-        }
-
-
-        private FinanceService financeService = new FinanceService();
+        private IFinanceService financeService = new FinanceService();
+        private IAccountService accountService = new AccountService();
 
         public ActionResult Index()
         {
@@ -44,33 +29,17 @@ namespace FinApp.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async System.Threading.Tasks.Task<ActionResult> Login(string name, string password)
+        public ActionResult Login(string name, string password)
         {
-            UserApp user = await UserManager.FindAsync(name, password);
-
-            if (user == null)
+            try
             {
-                ModelState.AddModelError("", "Некорректное имя или пароль.");
-            }
-            else
-            {
-                ClaimsIdentity ident = await UserManager.CreateIdentityAsync(user,
-                    DefaultAuthenticationTypes.ApplicationCookie);
-
-                AuthManager.SignOut();
-                AuthManager.SignIn(new AuthenticationProperties
-                {
-                    IsPersistent = false
-                }, ident);
-
-                if (UserManager.GetRoles(user.Id).Any(s => s.Equals("Admin")))
-                {
-                    return Redirect("/");
-                }
+                accountService.login(name, password);
                 return Redirect("/");
             }
-
-            return Json("error");
+            catch (AccountServiceException ex)
+            {
+                return Json(ex.Message);
+            }
         }
 
         [HttpPost]
@@ -78,90 +47,67 @@ namespace FinApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Register(string name, string password, string email)
         {
-            if (name.Trim() != "" && password.Trim() != "" && email.Trim() != "")
+            if (name.Trim() != string.Empty && password.Trim() != string.Empty && email.Trim() != string.Empty)
             {
-                UserApp user = new UserApp { UserName = name, Email = email };
-                IdentityResult result = UserManager.Create(user, password);
-
-                if (result.Succeeded)
+                try
                 {
+                    accountService.register(name, password, email);
                     return RedirectToAction("Index");
                 }
-                else
+                catch (AccountServiceException ex)
                 {
-                    return Json("error");
+                    return Json(ex.Message);
                 }
             }
-            return Json("error");
+            return Json("invalid input");
         }
 
         [Authorize]
         public ActionResult Logout()
         {
-            AuthManager.SignOut();
+            accountService.logout();
             return Redirect("/");
         }
 
-        /*
-         [HttpPost]
-         [Authorize]
-         public ActionResult Remove(string password)
-         {
-
-             string name = User.Identity.GetUserName();
-             UserApp user = UserManager.Find(name, password);
-             if (user != null)
-             {
-                financeService.operationRepo.
-                 IdentityResult result = UserManager.Delete(user);
-             }
-             UserManager.
-
-             AppUser user = await UserManager.FindByIdAsync(id);
-
-             if (user != null)
-             {
-                 IdentityResult result = await UserManager.DeleteAsync(user);
-                 if (result.Succeeded)
-                 {
-                     return RedirectToAction("Index");
-                 }
-                 else
-                 {
-                     return View("Error", result.Errors);
-                 }
-             }
-             else
-             {
-                 return View("Error", new string[] { "Пользователь не найден" });
-             }
-         }
-        */
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public ActionResult Remove(string password)
+        {
+            string name = User.Identity.GetUserName();
+            string id = User.Identity.GetUserId();
+            try
+            {
+                accountService.removeAccount(password, name);
+                financeService.cleanUpAccountById(id);
+                return RedirectToAction("Logout");
+            }
+            catch (AccountServiceException ex)
+            {
+                return Json(ex.Message);
+            }
+        }
 
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Rename(string name)
         {
-            var id = User.Identity.GetUserId();
-            UserApp user = UserManager.FindById(id);
-            user.UserName = name;
-            IdentityResult result = UserManager.Update(user);
-            
-            if (result.Succeeded)
+            if (name.Trim() != string.Empty)
             {
-                // FormsAuthentication.SetAuthCookie(name, true);
-                ClaimsIdentity ident =  UserManager.CreateIdentity(user,
-                    DefaultAuthenticationTypes.ApplicationCookie);
-                AuthManager.SignOut();
-                AuthManager.SignIn(new AuthenticationProperties
+                var idUser = User.Identity.GetUserId();
+                try
                 {
-                    IsPersistent = false
-                }, ident);
+                    accountService.rename(name, idUser);
+                    return RedirectToAction("Index");
+                }
+                catch (AccountServiceException ex)
+                {
+                    return Json(ex.Message);
+                }
 
-                return RedirectToAction("Index");
             }
-            return Json("error");
+            return Json("invalid input");
         }
 
         [Authorize]
@@ -169,8 +115,13 @@ namespace FinApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ChangePassword(string old_password, string new_password)
         {
-            UserManager.ChangePassword(User.Identity.GetUserId(), old_password, new_password);
-            return RedirectToAction("Index");
+            if (new_password.Trim() != string.Empty)
+            {
+                var idUser = User.Identity.GetUserId();
+                accountService.changePassword(old_password, new_password, idUser);
+                return RedirectToAction("Index");
+            }
+            return Json("invalid input");
         }
     }
 }

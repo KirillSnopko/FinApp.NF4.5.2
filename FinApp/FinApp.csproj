@@ -221,17 +221,21 @@
     <Compile Include="Entities\Database\UserContext.cs" />
     <Compile Include="Entities\Identity\Managers\RoleManagerImpl.cs" />
     <Compile Include="Entities\Identity\Managers\UserManagerImpl.cs" />
+    <Compile Include="Exceptions\AccountServiceException.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="repo\CreditRepo.cs" />
     <Compile Include="repo\DepositoryRepo.cs" />
-    <Compile Include="repo\ICreditRepo.cs" />
-    <Compile Include="repo\IDepositoryRepo.cs" />
-    <Compile Include="repo\IOperationRepo.cs" />
+    <Compile Include="repo\ifaces\ICreditRepo.cs" />
+    <Compile Include="repo\ifaces\IDepositoryRepo.cs" />
+    <Compile Include="repo\ifaces\IOperationRepo.cs" />
     <Compile Include="repo\OperationRepo.cs" />
+    <Compile Include="service\AccountService.cs" />
     <Compile Include="service\FinanceService.cs" />
+    <Compile Include="service\ifaces\IAccountService.cs" />
+    <Compile Include="service\ifaces\IFinanceService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />

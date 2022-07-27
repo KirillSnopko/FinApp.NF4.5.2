@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Microsoft.AspNet.Identity.Owin;
+using FinApp.repo.ifaces;
 
 namespace FinApp.repo
 {
@@ -26,6 +27,18 @@ namespace FinApp.repo
         {
             FinanceOperation operation = new FinanceOperation { idDepository = idDepository, amountOfMoney = amountOfMoney, comment = comment, isSpending = isSpending, idUser = idUser, created = DateTime.Now };
             financeContext.operations.Add(operation);
+            financeContext.SaveChanges();
+        }
+
+        public void delete(int idOperation)
+        {
+            financeContext.operations.ToList().RemoveAt(idOperation);
+            financeContext.SaveChanges();
+        }
+
+        public void deleteAll(string idUser)
+        {
+            financeContext.operations.ToList().RemoveAll(i => i.idUser == idUser);
             financeContext.SaveChanges();
         }
     }

@@ -1,8 +1,7 @@
-﻿using FinApp.Entities.Database;
-using FinApp.Entities.Finance;
+﻿using FinApp.Entities.Finance;
 using FinApp.service;
+using FinApp.service.ifaces;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -14,14 +13,13 @@ namespace FinApp.Controllers
     [Authorize]
     public class DepositoryController : Controller
     {
-        private FinanceService financeService = new FinanceService();
-
+        private IFinanceService financeService = new FinanceService();
 
         [HttpGet]
         public ActionResult List()
         {
             var id = User.Identity.GetUserId();
-            return View(financeService.depositoryRepo.depositoriesByUserId(id));
+            return View(financeService.DepositoryRepo().depositoriesByUserId(id));
         }
 
         [HttpPost]
@@ -29,7 +27,7 @@ namespace FinApp.Controllers
         {
             var id = User.Identity.GetUserId();
             Depository depository = new Depository { idUser = id, typeDep = tDep, typeMoney = tMoney, name = name, amount = amount };
-            financeService.depositoryRepo.add(depository);
+            financeService.DepositoryRepo().add(depository);
             return RedirectToAction("List");
         }
 
@@ -37,7 +35,7 @@ namespace FinApp.Controllers
         public ActionResult Details(int id)
         {
             var idUser = User.Identity.GetUserId();
-            return View(financeService.depositoryRepo.get(id));
+            return View(financeService.DepositoryRepo().get(id));
         }
 
         [HttpPost]
@@ -45,7 +43,7 @@ namespace FinApp.Controllers
         {
             if (name != null || name.Trim() != "")
             {
-                financeService.depositoryRepo.rename(name, id);
+                financeService.DepositoryRepo().rename(name, id);
             }
             return RedirectToAction($"/Details/{id}", id);
         }
@@ -54,8 +52,8 @@ namespace FinApp.Controllers
         public ActionResult Count()
         {
             var idUser = User.Identity.GetUserId();
-            int dep_count = financeService.depositoryRepo.count(idUser);
-            int credit_count = financeService.creditRepo.count(idUser);
+            int dep_count = financeService.DepositoryRepo().count(idUser);
+            int credit_count = financeService.CreditRepo().count(idUser);
             return Json(new { dep_count, credit_count }, JsonRequestBehavior.AllowGet);
         }
 
@@ -63,7 +61,7 @@ namespace FinApp.Controllers
         public ActionResult Delete(int id)
         {
             var idUser = User.Identity.GetUserId();
-            financeService.depositoryRepo.delete(id);
+            financeService.DepositoryRepo().delete(id);
             return RedirectToAction("/List");
         }
 
@@ -72,15 +70,15 @@ namespace FinApp.Controllers
         {
             var idUser = User.Identity.GetUserId();
             double amount = Double.Parse(amountOfMoney, CultureInfo.InvariantCulture);
-            financeService.depositoryRepo.change(idDepository, isSpending, amount);
-            financeService.operationRepo.SaveToHistory(idDepository, isSpending, amount, comment, idUser);
+            financeService.DepositoryRepo().change(idDepository, isSpending, amount);
+            financeService.OperationRepo().SaveToHistory(idDepository, isSpending, amount, comment, idUser);
             return RedirectToAction($"/Details/{idDepository}", idDepository);
         }
 
         [HttpGet]
         public ActionResult HistoryById(int id)
         {
-            List<FinanceOperation> history = financeService.operationRepo.getById(id);
+            List<FinanceOperation> history = financeService.OperationRepo().getById(id);
             return Json(history, JsonRequestBehavior.AllowGet);
         }
     }

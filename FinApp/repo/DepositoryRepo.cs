@@ -1,5 +1,6 @@
 ﻿using FinApp.Entities.Database;
 using FinApp.Entities.Finance;
+using FinApp.repo.ifaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +42,7 @@ namespace FinApp.repo
 
         public int count(string idUser)
         {
-           return financeContext.depositories.Where(i => i.idUser == idUser).Count();
+            return financeContext.depositories.Where(i => i.idUser == idUser).Count();
         }
 
         public void delete(int id)
@@ -63,6 +64,12 @@ namespace FinApp.repo
         public void rename(string name, int id)
         {
             financeContext.depositories.First(i => i.id == id).name = name;
+            financeContext.SaveChanges();
+        }
+
+        public void deleteAll(string idUser)
+        {
+            financeContext.depositories.ToList().RemoveAll(i => i.idUser == idUser);
             financeContext.SaveChanges();
         }
     }

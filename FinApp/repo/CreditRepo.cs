@@ -1,5 +1,6 @@
 ﻿using FinApp.Entities.Database;
 using FinApp.Entities.Finance;
+using FinApp.repo.ifaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +47,11 @@ namespace FinApp.repo
         }
 
         public void rename(string name, int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void deleteAll(string idUser)
         {
             throw new NotImplementedException();
         }
