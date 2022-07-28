@@ -1,6 +1,4 @@
-﻿using FinApp.Entities.Identity.Account;
-using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
 
 namespace FinApp.Entities.Finance
 {

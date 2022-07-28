@@ -1,7 +1,5 @@
-﻿using FinApp.Entities.Finance;
-using FinApp.Entities.Identity.Account;
+﻿using FinApp.Entities.Identity.Account;
 using Microsoft.AspNet.Identity.EntityFramework;
-using System.Data.Entity;
 
 namespace FinApp.Entities.Database
 {

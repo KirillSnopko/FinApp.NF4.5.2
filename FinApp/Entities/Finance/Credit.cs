@@ -1,8 +1,5 @@
-﻿using FinApp.Entities.Identity.Account;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System;
+
 
 namespace FinApp.Entities.Finance
 {

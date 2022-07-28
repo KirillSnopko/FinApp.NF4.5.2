@@ -1,10 +1,8 @@
 ﻿using FinApp.Entities.Database;
 using FinApp.Entities.Finance;
 using FinApp.repo.ifaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace FinApp.repo
 {
