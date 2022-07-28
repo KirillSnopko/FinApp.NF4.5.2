@@ -13,47 +13,90 @@
         <button type="button" class="btn btn-light">Remittance</button>
         <button type="button" class="btn btn-info" data-toggle="modal" data-target="#operation">New operation</button>
         <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete">Delete</button>
+        <button data-toggle="collapse" class="btn btn-info" data-target="#charts">Charts</button>
+        <button data-toggle="collapse" class="btn btn-info" data-target="#history">History</button>
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Charts
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="#" data-toggle="collapse" data-target="#doughnut">Doughnut (Category)</a>
+                <a class="dropdown-item" href="#" data-toggle="collapse" data-target="#line">Line (Adding/Spending)</a>
+            </div>
+        </div>
     </div>
 </div>
 
-<strong>Charts</strong>
-
-<div id="charts"></div>
-<canvas id="myChart" style="width:100%;max-width:800px"></canvas>
-<br />
-<button data-toggle="collapse" class="btn btn-info" data-target="#history">History</button>
-
-<div id="history" class="collapse"></div>
+<div class="row">
+    <div class="col">
+        <div id="line" class="collapse">
+            <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
+        </div>
+    </div>
+    <div class="col">
+        <div id="doughnut" class="collapse">
+            <canvas id="myChartDoughnut" width="500" height="500"></canvas>
+        </div>
+        <br />
+        <div id="history" class="collapse"></div>
+    </div>
+</div>
 
 <script>
     $(window).on('load', function () {
         $.get("../HistoryById/@Model.id", {},
             function (history) {
-                var table = $('<table class="table"><tr><th>Date</th><th>Comment</th><th>Value</th></tr>');
+                var table = $('<table class="table"><tr><th>Date</th><th>Category</th><th>Comment</th><th>Value</th></tr>');
                $(history).each(function (index, item) {
 
-                    var amountOfMoney = item.amountOfMoney;
+                   var amountOfMoney = item.amountOfMoney;
+                   var category = item.category;
+                   switch (category) {
+                       case 0:
+                           category = "Home";
+                           break;
+                       case 1:
+                           category = "Repair";
+                           break;
+                       case 2:
+                           category = "Supermarkets";
+                           break;
+                       case 3:
+                           category = "Pharmacy";
+                           break;
+                       case 4:
+                           category = "Entertaiment";
+                           break;
+                       case 5:
+                           category = "Transport";
+                           break;
+                       case 6:
+                           category = "Clothing";
+                           break;
+                       case 6:
+                           category = "Electronics";
+                           break;
+                       default:
+                           category = "Others";
+                           break;
+                   }
                    var comment = item.comment;
                    var date = new Date(parseInt(item.created.substr(6)));
                    var isSpending = item.isSpending;
                    if (isSpending) {
-                       table.append('<tr class="table-danger"><td>' + date + '<td>' + comment + '</td><td><strong> -' + amountOfMoney + '</strong>@Model.typeMoney</td ></tr >');
+                       table.append('<tr class="table-danger"><td>' + date + '</td><td>' + category + '</td><td>' + comment + '</td><td><strong> -' + amountOfMoney + '</strong>@Model.typeMoney</td ></tr >');
                    } else {
-                       table.append('<tr class="table-success"><td>' + date + '<td>' + comment + '</td><td><strong> +' + amountOfMoney + '</strong>@Model.typeMoney</td ></tr >');
+                       table.append('<tr class="table-success"><td>' + date + '</td><td>' + category + '</td><td>' + comment + '</td><td><strong> +' + amountOfMoney + '</strong>@Model.typeMoney</td ></tr >');
                    }
                });
                 table.append('</table>');
                 $('#history').html(table);
-
-
-
-
-
             }
         );
     });
 
-    var xValues = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
+
+    var xValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
     new Chart("myChart", {
         type: "line",
         data: {
@@ -74,6 +117,37 @@
         },
         options: {
             legend: { display: false }
+        }
+    });
+
+
+
+    new Chart(myChartDoughnut, {
+        type: 'pie',
+        data: {
+            labels: ['Home', 'Repair', 'Supermarkets', 'Pharmacy', "Entertaiment", "Transport", "Entertaiment", "Transport", "Clothing", "Electronics", "Others" ],
+            datasets: [{
+                label: '# of Tomatoes',
+                data: [12, 19, 3, 5],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.5)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            //cutoutPercentage: 40,
+            responsive: false,
+
         }
     });
 
@@ -119,7 +193,7 @@
     </div>
 </div>
 
-<!--  (idDepository=.., isSpending=.., amountOfMoney=.., comment=..)-->
+<!--  (idDepository=.., isSpending=.., amountOfMoney=.., comment=.., category)-->
 <div class="modal fade" id="operation" role="dialog">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
@@ -137,9 +211,12 @@
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text">$</span>
+                            <span class="input-group-text">0.00</span>
                         </div>
-                        <input type="text" class="form-control" placeholder="Amount of money (rr.cc)" name="amountOfMoney">
+                        <input type="text" class="form-control" placeholder="" name="amountOfMoney">
                     </div>
+
+
 
                     <!--Comment for operation-->
                     <div class="input-group mb-3">
@@ -150,16 +227,31 @@
                     </div>
                     <!--choosing between adding and spending-->
                     <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" class="custom-control-input" id="customRadio" name="isSpending" value="false">
+                        <input type="radio" class="custom-control-input" id="customRadio" name="isSpending" value="false" checked>
                         <label class="custom-control-label" for="customRadio">Add</label>
                     </div>
                     <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" class="custom-control-input" id="customRadio2" name="isSpending" value="true" checked>
+                        <input type="radio" class="custom-control-input" id="customRadio2" name="isSpending" value="true" data-toggle="collapse" data-target="#category" aria-expanded="false" aria-controls="category">
                         <label class="custom-control-label" for="customRadio2">Spend</label>
+                    </div>
+
+                    <!--Category-->
+                    <div class="form-group collapse" id="category">
+                        <label for="exampleFormControlSelect1">Category </label>
+                        <select class="form-control" id="exampleFormControlSelect1" name="category">
+                            <option>Home</option>
+                            <option>Repair</option>
+                            <option>Supermarkets</option>
+                            <option>Pharmacy</option>
+                            <option>Entertaiment</option>
+                            <option>Transport</option>
+                            <option>Clothing</option>
+                            <option>Electronics</option>
+                            <option>Others</option>
+                        </select>
                     </div>
                     <br />
                     <br />
-
                     <div class="form-group">
                         <div class="col-md-offset-2 col-md-10" style="display: flex;">
                             <input type="submit" value="Push" class="btn btn-success" formaction="../Change" />
