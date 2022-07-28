@@ -1,4 +1,6 @@
 ﻿using FinApp.repo;
+using System;
+using System.Collections.Generic;
 
 namespace FinApp.service.ifaces
 {

@@ -1,8 +1,13 @@
 ﻿using FinApp.Entities.Database;
+using FinApp.Entities.Finance;
 using FinApp.repo;
 using FinApp.service.ifaces;
 using Microsoft.AspNet.Identity.Owin;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web;
+using System.Web.Helpers;
 
 namespace FinApp.service
 {
@@ -41,5 +46,6 @@ namespace FinApp.service
         {
             return operationRepo;
         }
+
     }
 }

@@ -4,46 +4,53 @@
     ViewBag.Title = "Details";
 }
 
+
 <div>
-    <h2 class="d-inline p-2">@Model.name</h2><span class="badge badge-primary">@Model.amount @Model.typeMoney</span>
+    <h2 class="d-inline p-2">@Model.name</h2>
+    @if (Model.amount < 20)
+    {
+        <span class="badge badge-danger">@Model.amount @Model.typeMoney</span>
+    }
+    else
+    {
+        <span class="badge badge-primary">@Model.amount @Model.typeMoney</span>
+    }
 </div>
-<div class="container">
-    <div class="btn-group">
-        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#rename">Rename</button>
-        <button type="button" class="btn btn-light">Remittance</button>
-        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#operation">New operation</button>
-        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete">Delete</button>
-        <button data-toggle="collapse" class="btn btn-info" data-target="#charts">Charts</button>
-        <button data-toggle="collapse" class="btn btn-info" data-target="#history">History</button>
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Charts
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" href="#" data-toggle="collapse" data-target="#doughnut">Doughnut (Category)</a>
-                <a class="dropdown-item" href="#" data-toggle="collapse" data-target="#line">Line (Adding/Spending)</a>
-            </div>
-        </div>
+
+
+<div class="dropdown">
+    <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Settings
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#rename">Rename</a>
+        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#operation">New operation</a>
+        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete">Delete</a>
     </div>
 </div>
+
 
 <div class="row">
     <div class="col">
-        <div id="line" class="collapse">
-            <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
-        </div>
+        <span class="badge badge-primary">Current month</span>
+        <div id="history"></div>
     </div>
     <div class="col">
-        <div id="doughnut" class="collapse">
+        <span class="badge badge-primary">Current month</span>
+        <div id="doughnut">
             <canvas id="myChartDoughnut" width="500" height="500"></canvas>
         </div>
-        <br />
-        <div id="history" class="collapse"></div>
     </div>
 </div>
+<br />
+<div id="history" class="collapse"></div>
 
 <script>
+    const labelsDoughnut = [];
+    const dataDoughnut = [];
+
     $(window).on('load', function () {
+
         $.get("../HistoryById/@Model.id", {},
             function (history) {
                 var table = $('<table class="table"><tr><th>Date</th><th>Category</th><th>Comment</th><th>Value</th></tr>');
@@ -93,63 +100,56 @@
                 $('#history').html(table);
             }
         );
-    });
+        $.get("/api/Charts/Doughnut/CurrentMonth/@Model.id", {},
+            function (data) {
 
+                for (var i = 0; i < data.length; i++) {
+                    labelsDoughnut.push(data[i].Category);
+                    dataDoughnut.push(data[i].Sum);
+                }
 
-    var xValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-    new Chart("myChart", {
-        type: "line",
-        data: {
-            labels: xValues,
-            datasets: [{
-                data: [860, 1140, 1060, 1060, 1070, 1110, 1330, 2210, 7830, 2478],
-                borderColor: "red",
-                fill: false
-            }, {
-                data: [1600, 1700, 1700, 1900, 2000, 2700, 4000, 5000, 6000, 7000],
-                borderColor: "green",
-                fill: false
-            }, {
-                data: [300, 700, 2000, 5000, 6000, 4000, 2000, 1000, 200, 100],
-                borderColor: "blue",
-                fill: false
-            }]
-        },
-        options: {
-            legend: { display: false }
-        }
-    });
+                new Chart(myChartDoughnut, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labelsDoughnut,
+                        datasets: [{
+                            label: '# of Tomatoes',
+                            data: dataDoughnut,
+                            backgroundColor: [
+                                'rgba(255, 99, 132)',
+                                'rgba(54, 162, 235)',
+                                'rgba(255, 206, 86)',
+                                'rgba(75, 192, 192)',
+                                'rgba(102, 54, 255)',
+                                'rgba(46, 85, 183)',
+                                'rgba(190, 30, 80)',
+                                'rgba(190, 30, 199)',
+                                'rgba(26, 15, 49)'
 
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132,1)',
+                                'rgba(54, 162, 235,1)',
+                                'rgba(255, 206, 86,1)',
+                                'rgba(75, 192, 192,1)',
+                                'rgba(102, 54, 255,1)',
+                                'rgba(46, 85, 183,1)',
+                                'rgba(190, 30, 80,1)',
+                                'rgba(190, 30, 199,1)',
+                                'rgba(26, 15, 49,1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        //cutoutPercentage: 40,
+                        responsive: false,
 
+                    }
+                });
 
-    new Chart(myChartDoughnut, {
-        type: 'pie',
-        data: {
-            labels: ['Home', 'Repair', 'Supermarkets', 'Pharmacy', "Entertaiment", "Transport", "Entertaiment", "Transport", "Clothing", "Electronics", "Others" ],
-            datasets: [{
-                label: '# of Tomatoes',
-                data: [12, 19, 3, 5],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.5)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            //cutoutPercentage: 40,
-            responsive: false,
-
-        }
-    });
+            });
+     })
 
 
 
@@ -230,10 +230,14 @@
                         <input type="radio" class="custom-control-input" id="customRadio" name="isSpending" value="false" checked>
                         <label class="custom-control-label" for="customRadio">Add</label>
                     </div>
-                    <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" class="custom-control-input" id="customRadio2" name="isSpending" value="true" data-toggle="collapse" data-target="#category" aria-expanded="false" aria-controls="category">
-                        <label class="custom-control-label" for="customRadio2">Spend</label>
-                    </div>
+
+                    if (Model.amount > 5)
+                    {
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" class="custom-control-input" id="customRadio2" name="isSpending" value="true" data-toggle="collapse" data-target="#category" aria-expanded="false" aria-controls="category">
+                            <label class="custom-control-label" for="customRadio2">Spend</label>
+                        </div>
+                    }
 
                     <!--Category-->
                     <div class="form-group collapse" id="category">
@@ -243,7 +247,7 @@
                             <option>Repair</option>
                             <option>Supermarkets</option>
                             <option>Pharmacy</option>
-                            <option>Entertaiment</option>
+                            <option>Entertainment</option>
                             <option>Transport</option>
                             <option>Clothing</option>
                             <option>Electronics</option>
