@@ -62,6 +62,7 @@ namespace FinApp.Controllers
         {
             var idUser = User.Identity.GetUserId();
             financeService.DepositoryRepo().delete(id);
+            financeService.OperationRepo().deleteByIdDepository(id);
             return RedirectToAction("/List");
         }
 

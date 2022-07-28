@@ -39,5 +39,11 @@ namespace FinApp.repo
             financeContext.operations.ToList().RemoveAll(i => i.idUser == idUser);
             financeContext.SaveChanges();
         }
+
+        public void deleteByIdDepository(int idDepository)
+        {
+            financeContext.operations.ToList().RemoveAll(i => i.idDepository == idDepository);
+            financeContext.SaveChanges();
+        }
     }
 }

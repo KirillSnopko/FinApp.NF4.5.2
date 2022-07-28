@@ -9,5 +9,6 @@ namespace FinApp.repo.ifaces
         List<FinanceOperation> getById(int idDepository);
         void delete(int idOperation);
         void deleteAll(string idUser);
+        void deleteByIdDepository(int idDepository);
     }
 }
