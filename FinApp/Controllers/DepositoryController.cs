@@ -67,12 +67,12 @@ namespace FinApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult Change(int idDepository, bool isSpending, string amountOfMoney, string comment)
+        public ActionResult Change(int idDepository, bool isSpending, string amountOfMoney, string comment, Category category)
         {
             var idUser = User.Identity.GetUserId();
             double amount = Double.Parse(amountOfMoney, CultureInfo.InvariantCulture);
             financeService.DepositoryRepo().change(idDepository, isSpending, amount);
-            financeService.OperationRepo().SaveToHistory(idDepository, isSpending, amount, comment, idUser);
+            financeService.OperationRepo().SaveToHistory(idDepository, isSpending, amount, comment, idUser, category);
             return RedirectToAction($"/Details/{idDepository}", idDepository);
         }
 

@@ -21,9 +21,9 @@ namespace FinApp.repo
             return financeContext.operations.Where(i => i.idDepository == idDepository).ToList();
         }
 
-        public void SaveToHistory(int idDepository, bool isSpending, double amountOfMoney, string comment, string idUser)
+        public void SaveToHistory(int idDepository, bool isSpending, double amountOfMoney, string comment, string idUser, Category category)
         {
-            FinanceOperation operation = new FinanceOperation { idDepository = idDepository, amountOfMoney = amountOfMoney, comment = comment, isSpending = isSpending, idUser = idUser, created = DateTime.Now };
+            FinanceOperation operation = new FinanceOperation { idDepository = idDepository, amountOfMoney = amountOfMoney, comment = comment, isSpending = isSpending, idUser = idUser, created = DateTime.Now, category = category };
             financeContext.operations.Add(operation);
             financeContext.SaveChanges();
         }
