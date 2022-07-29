@@ -13,6 +13,7 @@ using FinApp.service;
 using System.Web.Security;
 using FinApp.service.ifaces;
 using FinApp.Exceptions;
+using System;
 
 namespace FinApp.Controllers
 {
@@ -33,15 +34,8 @@ namespace FinApp.Controllers
         {
             if (name.Trim() != string.Empty && name != null && password != null && password.Trim() != string.Empty)
             {
-                try
-                {
-                    accountService.login(name, password);
-                    return Redirect("/");
-                }
-                catch (AccountServiceException ex)
-                {
-                    return Json(ex.Message);
-                }
+                accountService.login(name, password);
+                return Redirect("/");
             }
             else { return Json("Invalid input"); }
         }
@@ -53,15 +47,8 @@ namespace FinApp.Controllers
         {
             if (name.Trim() != string.Empty && password.Trim() != string.Empty && email.Trim() != string.Empty && name != null && password != null && email != null)
             {
-                try
-                {
-                    accountService.register(name, password, email);
-                    return RedirectToAction("Index");
-                }
-                catch (AccountServiceException ex)
-                {
-                    return Json(ex.Message);
-                }
+                accountService.register(name, password, email);
+                return RedirectToAction("Index");
             }
             return Json("invalid input");
         }
@@ -82,16 +69,9 @@ namespace FinApp.Controllers
             string id = User.Identity.GetUserId();
             if (password.Trim() != string.Empty && password != null)
             {
-                try
-                {
-                    accountService.removeAccount(password, name);
-                    financeService.cleanUpAccountById(id);
-                    return RedirectToAction("Logout");
-                }
-                catch (AccountServiceException ex)
-                {
-                    return Json(ex.Message);
-                }
+                accountService.removeAccount(password, name);
+                financeService.cleanUpAccountById(id);
+                return RedirectToAction("Logout");
             }
             else
             {
@@ -107,16 +87,8 @@ namespace FinApp.Controllers
             if (name.Trim() != string.Empty && name != null)
             {
                 var idUser = User.Identity.GetUserId();
-                try
-                {
-                    accountService.rename(name, idUser);
-                    return RedirectToAction("Index");
-                }
-                catch (AccountServiceException ex)
-                {
-                    return Json(ex.Message);
-                }
-
+                accountService.rename(name, idUser);
+                return RedirectToAction("Index");
             }
             return Json("invalid input");
         }
@@ -128,18 +100,25 @@ namespace FinApp.Controllers
         {
             if (new_password.Trim() != string.Empty && old_password.Trim() != string.Empty && new_password != null && old_password != null)
             {
-                try
-                {
-                    var userName = User.Identity.Name;
-                    accountService.changePassword(old_password, new_password, userName);
-                    return RedirectToAction("Index");
-                }
-                catch (AccountServiceException ex)
-                {
-                    return Json(ex.Message);
-                }
+                var userName = User.Identity.Name;
+                accountService.changePassword(old_password, new_password, userName);
+                return RedirectToAction("Index");
             }
             return Json("invalid input");
+        }
+
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            if (filterContext.Exception != null)
+            {
+                Tuple<int, string> status = new Tuple<int, string>(509, filterContext.Exception.Message);
+                filterContext.Result = new JsonResult()
+                {
+                    JsonRequestBehavior = JsonRequestBehavior.AllowGet,
+                    Data = status
+                };
+                filterContext.ExceptionHandled = true;
+            }
         }
     }
 }
