@@ -13,7 +13,12 @@ namespace FinApp.Controllers
     [Authorize]
     public class DepositoryController : Controller
     {
-        private IFinanceService financeService = new FinanceService();
+        private IFinanceService financeService;
+
+        public DepositoryController(IFinanceService financeService)
+        {
+            this.financeService = financeService;
+        }
 
         [HttpGet]
         public ActionResult List()

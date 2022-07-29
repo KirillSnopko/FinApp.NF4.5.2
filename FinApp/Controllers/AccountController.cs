@@ -19,8 +19,14 @@ namespace FinApp.Controllers
 {
     public class AccountController : Controller
     {
-        private IFinanceService financeService = new FinanceService();
-        private IAccountService accountService = new AccountService();
+        private IFinanceService financeService;
+        private IAccountService accountService;
+
+        public AccountController(IFinanceService financeService, IAccountService accountService)
+        {
+            this.financeService = financeService;
+            this.accountService = accountService;
+        }
 
         public ActionResult Index()
         {
@@ -111,11 +117,11 @@ namespace FinApp.Controllers
         {
             if (filterContext.Exception != null)
             {
-                Tuple<int, string> status = new Tuple<int, string>(509, filterContext.Exception.Message);
+                var response = new { Status = 509, Message = filterContext.Exception.Message };
                 filterContext.Result = new JsonResult()
                 {
                     JsonRequestBehavior = JsonRequestBehavior.AllowGet,
-                    Data = status
+                    Data = response
                 };
                 filterContext.ExceptionHandled = true;
             }

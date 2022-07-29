@@ -16,6 +16,7 @@ namespace FinApp
         {
             // Код, выполняемый при запуске приложения
             AreaRegistration.RegisterAllAreas();
+            UnityConfig.RegisterComponents();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);            
         }
