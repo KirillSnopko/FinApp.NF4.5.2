@@ -13,8 +13,7 @@ namespace FinApp.Controllers
     [Authorize]
     public class ChartsController : ApiController
     {
-        private readonly IFinanceService financeService;  //= new FinanceService();
-
+        private readonly IFinanceService financeService;
 
         public ChartsController(IFinanceService financeService)
         {
