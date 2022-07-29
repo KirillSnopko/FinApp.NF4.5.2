@@ -14,6 +14,7 @@ using System.Web.Security;
 using FinApp.service.ifaces;
 using FinApp.Exceptions;
 using System;
+using log4net;
 
 namespace FinApp.Controllers
 {
@@ -21,11 +22,13 @@ namespace FinApp.Controllers
     {
         private IFinanceService financeService;
         private IAccountService accountService;
+        private ILog logger;
 
-        public AccountController(IFinanceService financeService, IAccountService accountService)
+        public AccountController(IFinanceService financeService, IAccountService accountService, ILog loggerAccount)
         {
             this.financeService = financeService;
             this.accountService = accountService;
+            this.logger = loggerAccount;
         }
 
         public ActionResult Index()
@@ -54,6 +57,7 @@ namespace FinApp.Controllers
             if (name.Trim() != string.Empty && password.Trim() != string.Empty && email.Trim() != string.Empty && name != null && password != null && email != null)
             {
                 accountService.register(name, password, email);
+                logger.Info($"created new user => name: {name}, email: {email}");
                 return RedirectToAction("Index");
             }
             return Json("invalid input");
@@ -77,6 +81,7 @@ namespace FinApp.Controllers
             {
                 accountService.removeAccount(password, name);
                 financeService.cleanUpAccountById(id);
+                logger.Info($"removed  user => id: {id}, name: {name}");
                 return RedirectToAction("Logout");
             }
             else
@@ -93,7 +98,9 @@ namespace FinApp.Controllers
             if (name.Trim() != string.Empty && name != null)
             {
                 var idUser = User.Identity.GetUserId();
+                var currentName = User.Identity.Name;
                 accountService.rename(name, idUser);
+                logger.Info($"renamed user => id: {idUser}, old name: {currentName}, new name: {name}");
                 return RedirectToAction("Index");
             }
             return Json("invalid input");
@@ -106,8 +113,10 @@ namespace FinApp.Controllers
         {
             if (new_password.Trim() != string.Empty && old_password.Trim() != string.Empty && new_password != null && old_password != null)
             {
+                var idUser = User.Identity.GetUserId();
                 var userName = User.Identity.Name;
                 accountService.changePassword(old_password, new_password, userName);
+                logger.Info($"user changed password => id: {idUser}, name: {userName}");
                 return RedirectToAction("Index");
             }
             return Json("invalid input");
@@ -115,6 +124,7 @@ namespace FinApp.Controllers
 
         protected override void OnException(ExceptionContext filterContext)
         {
+
             if (filterContext.Exception != null)
             {
                 var response = new { Status = 509, Message = filterContext.Exception.Message };
