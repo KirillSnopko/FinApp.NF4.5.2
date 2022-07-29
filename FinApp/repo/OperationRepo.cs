@@ -16,9 +16,14 @@ namespace FinApp.repo
             this.financeContext = financeContext;
         }
 
-        public List<FinanceOperation> getById(int idDepository)
+        public List<FinanceOperation> getByIdDepository(int idDepository)
         {
             return financeContext.operations.Where(i => i.idDepository == idDepository).ToList();
+        }
+
+        public List<FinanceOperation> getByIdUser(string idUser)
+        {
+            return financeContext.operations.Where(i => i.idUser == idUser).ToList();
         }
 
         public void SaveToHistory(int idDepository, bool isSpending, double amountOfMoney, string comment, string idUser, Category category)

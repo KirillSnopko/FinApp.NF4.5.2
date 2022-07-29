@@ -84,7 +84,7 @@ namespace FinApp.Controllers
         [HttpGet]
         public ActionResult HistoryById(int id)
         {
-            List<FinanceOperation> history = financeService.OperationRepo().getById(id);
+            List<FinanceOperation> history = financeService.OperationRepo().getByIdDepository(id);
             return Json(history, JsonRequestBehavior.AllowGet);
         }
     }

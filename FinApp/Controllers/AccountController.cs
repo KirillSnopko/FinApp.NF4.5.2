@@ -82,18 +82,21 @@ namespace FinApp.Controllers
                 accountService.removeAccount(password, name);
                 financeService.cleanUpAccountById(id);
                 logger.Info($"removed  user => id: {id}, name: {name}");
-                return RedirectToAction("Logout");
+
+                accountService.logout();
+                return Json(new { status = 200 });
+                //return RedirectToAction("Logout");
             }
             else
             {
-                return Json("invalid input");
+                return Json(new { status = 500, message = "invalid password" });
             }
         }
 
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Rename(string name)
+        public JsonResult Rename(string name)
         {
             if (name.Trim() != string.Empty && name != null)
             {
@@ -101,15 +104,15 @@ namespace FinApp.Controllers
                 var currentName = User.Identity.Name;
                 accountService.rename(name, idUser);
                 logger.Info($"renamed user => id: {idUser}, old name: {currentName}, new name: {name}");
-                return RedirectToAction("Index");
+                return Json(new { status = 200 });
             }
-            return Json("invalid input");
+            return Json(new { status = 500, message = "invalid input" });
         }
 
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ChangePassword(string old_password, string new_password)
+        public JsonResult ChangePassword(string old_password, string new_password)
         {
             if (new_password.Trim() != string.Empty && old_password.Trim() != string.Empty && new_password != null && old_password != null)
             {
@@ -117,9 +120,9 @@ namespace FinApp.Controllers
                 var userName = User.Identity.Name;
                 accountService.changePassword(old_password, new_password, userName);
                 logger.Info($"user changed password => id: {idUser}, name: {userName}");
-                return RedirectToAction("Index");
+                return Json(new { status = 200 });
             }
-            return Json("invalid input");
+            return Json(new { status = 500, message = "invalid input" });
         }
 
         protected override void OnException(ExceptionContext filterContext)
@@ -127,7 +130,7 @@ namespace FinApp.Controllers
 
             if (filterContext.Exception != null)
             {
-                var response = new { Status = 509, Message = filterContext.Exception.Message };
+                var response = new { status = 509, message = filterContext.Exception.Message };
                 filterContext.Result = new JsonResult()
                 {
                     JsonRequestBehavior = JsonRequestBehavior.AllowGet,

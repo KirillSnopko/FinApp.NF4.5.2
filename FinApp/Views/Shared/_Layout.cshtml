@@ -88,9 +88,10 @@
         </div>
     </div>
 
-    <!--for badges-->
+    <!--my scripts-->
     @using System.Web.Optimization
     @Scripts.Render("~/Scripts/my/badges.js")
+    @Scripts.Render("~/Scripts/my/settings_user.js")
     @RenderSection("scripts", required: false)
 
     <!-- Settings -->
@@ -105,54 +106,57 @@
                     </button>
                 </div>
                 <!--Body-->
+                <!--*********************Rename******************-->
                 <div class="modal-body">
                     <kbd>Rename</kbd>
                     <br />
-                    @using (Html.BeginForm())
-                    {
-                        @Html.AntiForgeryToken();
+                    <p id="err_rename_user" class="bg-danger"></p>
+                    <form name="rename_user" action="#" method="post" onsubmit="return false">
+                        @Html.AntiForgeryToken()
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">Name</span>
                             </div>
                             <input type="text" class="form-control" placeholder="@User.Identity.Name" name="name">
-                            <input type="submit" value="Rename" class="btn btn-outline-danger" formaction="../Account/Rename" />
+                            <input type="button" value="Rename" class="btn btn-outline-danger" id="button_rename_user" />
                         </div>
-                    }
+                    </form>
 
+                    <!--Change password-->
                     <kbd>Change password</kbd>
-                    @using (Html.BeginForm())
-                    {
-                        @Html.AntiForgeryToken();
+                    <p id="err_ch_pass" class="bg-danger"></p>
+                    <form name="change_password" action="#" method="post" onsubmit="return false">
+
+                        @Html.AntiForgeryToken()
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">Old</span>
                             </div>
                             <input type="password" class="form-control" placeholder="" name="old_password">
-
                         </div>
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">New</span>
                             </div>
                             <input type="password" class="form-control" placeholder="" name="new_password">
-                            <input type="submit" value="Confirm" class="btn btn-outline-danger" formaction="Account/ChangePassword" />
+                            <input type="button" value="Confirm" class="btn btn-outline-danger" id="button_ch_pass" />
                         </div>
-                    }
+                    </form>
+
+
                     <!--Remove form-->
                     <kbd>Remove account</kbd>
-                    <br />
-                    @using (Html.BeginForm())
-                    {
-                        @Html.AntiForgeryToken();
+                    <p id="err_remove_user" class="bg-danger"></p>
+                    <form name="remove_user" action="#" method="post" onsubmit="return false">
+                        @Html.AntiForgeryToken()
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">Password</span>
                             </div>
-                            <input type="password" class="form-control" placeholder="" name="name">
-                            <input type="submit" value="Remove" class="btn btn-outline-danger" formaction="Account/Remove" />
+                            <input type="password" class="form-control" placeholder="" name="password">
+                            <input type="button" value="Remove" class="btn btn-outline-danger" formaction="Account/Remove" id="button_remove_user" />
                         </div>
-                    }
+                    </form>
 
                 </div>
                 <!--Footer-->
@@ -162,6 +166,5 @@
             </div>
         </div>
     </div>
-
 </body>
 </html>
