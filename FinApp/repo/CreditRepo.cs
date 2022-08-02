@@ -15,29 +15,33 @@ namespace FinApp.repo
         {
             this.financeContext = financeContext;
         }
-        public void add(Credit depository)
+        public void add(Credit credit)
         {
-            throw new NotImplementedException();
+            financeContext.credits.Add(credit);
+            financeContext.SaveChanges();
         }
 
-        public void change(int idDepository, bool isSpending, double amountOfMoney)
+        public void reduce(int idCredit, double value)
         {
-            throw new NotImplementedException();
+            Credit credit = financeContext.credits.Where(i => i.id == idCredit).First();
+            credit.returned += value;
+            financeContext.SaveChanges();
         }
 
         public int count(string idUser)
         {
-           return financeContext.credits.Where(i => i.idUser == idUser).Count();
+            return financeContext.credits.Where(i => i.idUser == idUser).Count();
         }
 
         public void delete(int id)
         {
-            throw new NotImplementedException();
+            financeContext.credits.Remove(financeContext.credits.Where(i => i.id == id).First());
+            financeContext.SaveChanges();
         }
 
-        public List<Credit> depositoriesByUserId(string id)
+        public List<Credit> creditsByUserId(string id)
         {
-            throw new NotImplementedException();
+            return financeContext.credits.Where(i => i.idUser == id).ToList();
         }
 
         public Credit get(int id)

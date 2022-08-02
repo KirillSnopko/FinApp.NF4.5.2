@@ -1,0 +1,100 @@
+﻿
+@{
+    ViewBag.Title = "Credits";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-inline-block">
+    <h4>Credits <span class="badge badge-secondary">!!!!!</span></h4>
+</div>
+
+
+<button class="btn btn-success" href="#" data-toggle="modal" data-target="#create">Create</button>
+
+<div id="credits"></div>
+
+@using System.Web.Optimization
+@Scripts.Render("~/Scripts/my/TableCredits.js")
+@Scripts.Render("~/Scripts/my/credits_button.js")
+
+<div id="current_credit" value=""></div>
+
+
+
+<!--  (value=.., comment=.., Close date=..)-->
+<div class="modal fade" id="create" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Create</h4>
+                <p id="err_create_credit" class="bg-danger"></p>
+            </div>
+            <div class="modal-body">
+                <form name="create_credit" action="#" method="post" onsubmit="return false">
+                    @Html.AntiForgeryToken()
+                    <!--Value-->
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">$</span>
+                            <span class="input-group-text">0.00</span>
+                        </div>
+                        <input type="text" class="form-control" placeholder="" name="value" required>
+                    </div>
+                    <!--Comment for operation-->
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Text</span>
+                        </div>
+                        <input type="text" class="form-control" placeholder="Enter comment" name="comment" required>
+                    </div>
+                    <!--Close date-->
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Close date</span>
+                        </div>
+                        <input type="date" class="form-control" placeholder="" name="closeDate">
+                    </div>
+
+                    <br />
+                    <br />
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10" style="display: flex;">
+                            <input type="button" value="Create" class="btn btn-success" id="button_create_credit" />
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete -->
+<div class="modal fade" id="delete" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <strong class="modal-title">Please, confirm this action.</strong>
+                <p id="err_delete_credit" class="bg-danger"></p>
+            </div>
+            <div class="modal-body">
+                <form name="delete_credit" action="#" method="post" onsubmit="return false">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="idCredit" id="idCredit" />
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10" style="display: flex;">
+                            <input type="button" value="Confirm" class="btn btn-danger" id="button_delete_credit" />
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

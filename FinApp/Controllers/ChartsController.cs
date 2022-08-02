@@ -24,17 +24,26 @@ namespace FinApp.Controllers
         public ChartsController() { }
 
         [HttpGet]
-        [Route("api/Charts/Spending/CurrentMonth/{idDepository}")]
-        public IHttpActionResult SpendingByIdDepository(int idDepository)
+        [Route("api/Charts/Spending/CurrentDepository/CurrentMonth/{idDepository}")]
+        public IHttpActionResult getSpendingDataCurDepCurMonth(int idDepository)
         {
-            List<FinanceOperation> financeOperations = financeService.OperationRepo().getByIdDepository(idDepository).Where(i=> i.isSpending == true).ToList();
+            List<FinanceOperation> financeOperations = financeService.OperationRepo().getByIdDepository(idDepository).Where(i => i.isSpending == true).ToList();
             var data = financeOperations.Where(i => i.created.Month == DateTime.Now.Month).GroupBy(i => i.category).Select(i => new { Category = Enum.GetName(typeof(Category), i.Key), Sum = i.Sum(x => x.amountOfMoney) }).ToList();
             return Json(data);
         }
 
         [HttpGet]
-        [Route("api/Charts/allDepository/Spending/CurrentMonth")]
-        public IHttpActionResult SpendingByIdUser()
+        [Route("api/Charts/Addition/CurrentDepository/CurrentMonth/{idDepository}")]
+        public IHttpActionResult getAddDataCurDepCurMonth(int idDepository)
+        {
+            List<FinanceOperation> financeOperations = financeService.OperationRepo().getByIdDepository(idDepository).Where(i => i.isSpending == false).ToList();
+            var data = financeOperations.Where(i => i.created.Month == DateTime.Now.Month).GroupBy(i => i.category).Select(i => new { Category = Enum.GetName(typeof(Category), i.Key), Sum = i.Sum(x => x.amountOfMoney) }).ToList();
+            return Json(data);
+        }
+
+        [HttpGet]
+        [Route("api/Charts/Spending/allDepository/CurMonth")]
+        public IHttpActionResult getSpendDataAllDepCurMonth()
         {
             string idUser = User.Identity.GetUserId();
             List<FinanceOperation> financeOperations = financeService.OperationRepo().getByIdUser(idUser).Where(i => i.isSpending == true).ToList();
@@ -43,8 +52,8 @@ namespace FinApp.Controllers
         }
 
         [HttpGet]
-        [Route("api/Charts/allDepository/Addition/CurrentMonth")]
-        public IHttpActionResult AdditionByIdUser()
+        [Route("api/Charts/Addition/allDepository/CurMonth")]
+        public IHttpActionResult getAddDataAllDepCurMonth()
         {
             string idUser = User.Identity.GetUserId();
             List<FinanceOperation> financeOperations = financeService.OperationRepo().getByIdUser(idUser).Where(i => i.isSpending == false).ToList();
@@ -52,5 +61,24 @@ namespace FinApp.Controllers
             return Json(data);
         }
 
+        [HttpGet]
+        [Route("api/Charts/Spending/AllDepository/AllTime")]
+        public IHttpActionResult getSpendDataAllDepAllTime()
+        {
+            string idUser = User.Identity.GetUserId();
+            List<FinanceOperation> financeOperations = financeService.OperationRepo().getByIdUser(idUser).Where(i => i.isSpending == true).ToList();
+            var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = financeService.DepositoryRepo().get(i.Key).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
+            return Json(data);
+        }
+
+        [HttpGet]
+        [Route("api/Charts/Addition/allDepository/AllTime")]
+        public IHttpActionResult getAddDataAllDepAllTime()
+        {
+            string idUser = User.Identity.GetUserId();
+            List<FinanceOperation> financeOperations = financeService.OperationRepo().getByIdUser(idUser).Where(i => i.isSpending == false).ToList();
+            var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = financeService.DepositoryRepo().get(i.Key).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
+            return Json(data);
+        }
     }
 }

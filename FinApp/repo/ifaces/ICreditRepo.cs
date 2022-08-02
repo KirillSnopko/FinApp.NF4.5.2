@@ -5,13 +5,13 @@ namespace FinApp.repo.ifaces
 {
     public interface ICreditRepo
     {
-        List<Credit> depositoriesByUserId(string id);
-        void add(Credit depository);
+        List<Credit> creditsByUserId(string id);
+        void add(Credit credit);
         Credit get(int id);
         void rename(string name, int id);
         int count(string idUser);
         void delete(int id);
         void deleteAll(string idUser);
-        void change(int idDepository, bool isSpending, double amountOfMoney);
+        void reduce(int idCredit, double value);
     }
 }

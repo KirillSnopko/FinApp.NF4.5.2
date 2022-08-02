@@ -4,148 +4,71 @@
     ViewBag.Title = "Details";
 }
 
-
-<div>
-    <h2 class="d-inline p-2">@Model.name</h2>
-    @if (Model.amount < 20)
-    {
-        <span class="badge badge-danger">@Model.amount @Model.typeMoney</span>
-    }
-    else
-    {
-        <span class="badge badge-primary">@Model.amount @Model.typeMoney</span>
-    }
-</div>
-
-
-<div class="dropdown">
-    <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Settings
-    </button>
-    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#rename">Rename</a>
-        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#operation">New operation</a>
-        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete">Delete</a>
-    </div>
-</div>
-
-
 <div class="row">
-    <div class="col">
-        <span class="badge badge-primary">Current month</span>
-        <div id="history"></div>
+    <div class="col-3">
+        <h2 class="d-inline p-2">@Model.name</h2>
+        @if (Model.amount < 20)
+        {
+            <span class="badge badge-danger">@Model.amount @Model.typeMoney</span>
+        }
+        else
+        {
+            <span class="badge badge-primary">@Model.amount @Model.typeMoney</span>
+        }
     </div>
+
     <div class="col">
-        <span class="badge badge-primary">Current month</span>
-        <div id="doughnut">
-            <canvas id="myChartDoughnut" width="500" height="500"></canvas>
+
+        <div class="dropdown">
+            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Settings
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#rename">Rename</a>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#operation">New operation</a>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete">Delete</a>
+            </div>
         </div>
     </div>
 </div>
 <br />
-<div id="history" class="collapse"></div>
+<br />
 
-<script>
-    const colors = [
-        'rgba(255, 99, 132)',
-        'rgba(54, 162, 235)',
-        'rgba(255, 206, 86)',
-        'rgba(75, 192, 192)',
-        'rgba(102, 54, 255)',
-        'rgba(46, 85, 183)',
-        'rgba(190, 30, 80)',
-        'rgba(190, 30, 199)',
-        'rgba(26, 15, 49)'
-    ];
+<div class="row">
+    <div class="col">
+        <div id="history"></div>
 
-    $(window).on('load', function () {
+        <!--for grouping-->
+        <span class="badge badge-primary">Group by</span>
+        <div class="btn-group">
+            <select id="chngroup" class="form-select" style="width:200px; display:inline" title="grouping:">
+                <option value="category">Category</option>
+                <option value="date">Date</option>
+                <option value="clear" selected="selected">Clear</option>
+            </select>
+        </div>
 
-        $.get("../HistoryById/@Model.id", {},
-            function (history) {
-                var table = $('<table class="table"><tr><th>Date</th><th>Category</th><th>Comment</th><th>Value</th></tr>');
-               $(history).each(function (index, item) {
+        <!--jqGrid table-->
+        <table id="jqg"></table>
+        <div id="jpager"></div>
 
-                   var amountOfMoney = item.amountOfMoney;
-                   var category = item.category;
-                   switch (category) {
-                       case 0:
-                           category = "Home";
-                           break;
-                       case 1:
-                           category = "Repair";
-                           break;
-                       case 2:
-                           category = "Supermarkets";
-                           break;
-                       case 3:
-                           category = "Pharmacy";
-                           break;
-                       case 4:
-                           category = "Entertaiment";
-                           break;
-                       case 5:
-                           category = "Transport";
-                           break;
-                       case 6:
-                           category = "Clothing";
-                           break;
-                       case 6:
-                           category = "Electronics";
-                           break;
-                       default:
-                           category = "Others";
-                           break;
-                   }
-                   var comment = item.comment;
-                   var date = new Date(parseInt(item.created.substr(6)));
-                   var isSpending = item.isSpending;
-                   if (isSpending) {
-                       table.append('<tr class="table-danger"><td>' + date + '</td><td>' + category + '</td><td>' + comment + '</td><td><strong> -' + amountOfMoney + '</strong>@Model.typeMoney</td ></tr >');
-                   } else {
-                       table.append('<tr class="table-success"><td>' + date + '</td><td>' + category + '</td><td>' + comment + '</td><td><strong> +' + amountOfMoney + '</strong>@Model.typeMoney</td ></tr >');
-                   }
-               });
-                table.append('</table>');
-                $('#history').html(table);
-            }
-        );
-        $.get("/api/Charts/Spending/CurrentMonth/@Model.id", {},
-            function (data) {
-                const labelsDoughnut = [];
-                const dataDoughnut = [];
-                for (var i = 0; i < data.length; i++) {
-                    labelsDoughnut.push(data[i].Category);
-                    dataDoughnut.push(data[i].Sum);
-                }
-
-                new Chart(myChartDoughnut, {
-                    type: 'doughnut',
-                    data: {
-                        labels: labelsDoughnut,
-                        datasets: [{
-                            label: '# of Tomatoes',
-                            data: dataDoughnut,
-                            backgroundColor: colors,
-                            borderColor: colors,
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        //cutoutPercentage: 40,
-                        responsive: false,
-                        plugins: {
-                            title: {
-                                display: true,
-                                text: 'Expenses for the current month'
-                            }
-                        }
-                    }
-                });
-            });
-     })
-</script>
+        <!--Excel-->
+        <button class="btn btn-success" id="Excel">Export to Excel</button>
+    </div>
+    <div class="col">
+        <span class="badge badge-primary">Current month</span>
+        <div id="doughnut">
+            <canvas id="myChartDoughnut" width="400" height="400"></canvas>
+        </div>
+    </div>
+</div>
+<br />
 
 
+@using System.Web.Optimization
+@Scripts.Render("~/Scripts/my/depo_details.js")
+@Scripts.Render("~/Scripts/my/jqGridDepo.js")
+@Scripts.Render("~/Scripts/my/Excel.js")
 
 
 <!-- Rename -->
@@ -233,6 +156,7 @@
                     <div class="form-group collapse" id="category">
                         <label for="exampleFormControlSelect1">Category </label>
                         <select class="form-control" id="exampleFormControlSelect1" name="category">
+                            <option>Addition</option>
                             <option>Home</option>
                             <option>Repair</option>
                             <option>Supermarkets</option>

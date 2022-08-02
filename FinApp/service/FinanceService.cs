@@ -21,9 +21,9 @@ namespace FinApp.service
             }
         }
 
-        private DepositoryRepo depositoryRepo = new DepositoryRepo(financeContext);
-        private OperationRepo operationRepo = new OperationRepo(financeContext);
-        private CreditRepo creditRepo = new CreditRepo(financeContext);
+        public DepositoryRepo depositoryRepo = new DepositoryRepo(financeContext);
+        public OperationRepo operationRepo = new OperationRepo(financeContext);
+        public CreditRepo creditRepo = new CreditRepo(financeContext);
 
         public void cleanUpAccountById(string idUser)
         {

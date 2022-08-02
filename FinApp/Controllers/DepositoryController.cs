@@ -2,11 +2,13 @@
 using FinApp.service;
 using FinApp.service.ifaces;
 using Microsoft.AspNet.Identity;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Web;
 using System.Web.Mvc;
+using System.Linq;
 
 namespace FinApp.Controllers
 {
@@ -84,7 +86,7 @@ namespace FinApp.Controllers
         [HttpGet]
         public ActionResult HistoryById(int id)
         {
-            List<FinanceOperation> history = financeService.OperationRepo().getByIdDepository(id);
+            var history = financeService.OperationRepo().getByIdDepository(id).Select(i => new { date = i.created.ToString("dddd, dd MMMM yyyy HH:mm:ss"), category = Enum.GetName(typeof(Category), i.category), comment = i.comment, value = i.isSpending?("-" + i.amountOfMoney).ToString(): ("+" + i.amountOfMoney).ToString(), status = i.isSpending }).ToList();
             return Json(history, JsonRequestBehavior.AllowGet);
         }
     }

@@ -16,6 +16,6 @@ namespace FinApp.Entities.Finance
 
     public enum Category
     {
-        Home, Repair, Supermarkets, Pharmacy, Entertainment, Transport, Clothing, Electronics, Others
+        Home, Repair, Supermarkets, Pharmacy, Entertainment, Transport, Clothing, Electronics, Others, Addition
     }
 }
