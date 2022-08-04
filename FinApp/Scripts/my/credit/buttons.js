@@ -36,8 +36,7 @@
 
 
     $("#button_delete_credit").click(function () {
-        var id = $.cookie("currentId");
-        // var id = getId();
+        var id = $('#idCredit_delete').val();
         var token = $('input[name="__RequestVerificationToken"]', delete_credit).val();
         $.post("/Credit/Delete",
             {
@@ -45,19 +44,45 @@
                 __RequestVerificationToken: token,
             },
             function (status) {
-                $.removeCookie('currentId');
                 if (status['status'] == 200) {
                     location.reload();
-
+                    $('#idCredit_delete').val("");
                 } else {
                     document.getElementById('err_delete_credit').innerHTML = status['message'];
                 }
-
             });
-
     });
 
+    $("#button_reduce_credit").click(function () {
+        var id = $('#idCredit_reduce').val();
+        var value = document.reduce_credit.value;
+        var comment = document.reduce_credit.comment;
+        var token = $('input[name="__RequestVerificationToken"]', reduce_credit).val();
 
+        if (!typeof value.value == 'number' || value.value <= 0) {
+            document.getElementById('err_reduce_credit').innerHTML = "please, write correct value";
+            value.focus();
 
-
+        } else if (comment.value.trim() == "" || comment.value == null) {
+            document.getElementById('err_reduce_credit').innerHTML = "please, write correct comment";
+            comment.focus();
+        }
+        else {
+            $.post("/Credit/Reduce",
+                {
+                    idCredit: id,
+                    value: value.value,
+                    comment: comment.value,
+                    __RequestVerificationToken: token,
+                },
+                function (status) {
+                    if (status['status'] == 200) {
+                        location.reload();
+                        $('#idCredit_reduce').val("");
+                    } else {
+                        document.getElementById('err_reduce_credit').innerHTML = status['message'];
+                    }
+                });
+        }
+    });
 });

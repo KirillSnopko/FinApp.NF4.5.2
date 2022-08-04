@@ -41,13 +41,13 @@ namespace FinApp.repo
 
         public void deleteAll(string idUser)
         {
-            financeContext.operations.ToList().RemoveAll(i => i.idUser == idUser);
+            financeContext.operations.RemoveRange(financeContext.operations.Where(i => i.idUser == idUser).ToList());
             financeContext.SaveChanges();
         }
 
         public void deleteByIdDepository(int idDepository)
         {
-            financeContext.operations.ToList().RemoveAll(i => i.idDepository == idDepository);
+            financeContext.operations.RemoveRange(financeContext.operations.Where(i=>i.idDepository==idDepository).ToList());
             financeContext.SaveChanges();
         }
     }

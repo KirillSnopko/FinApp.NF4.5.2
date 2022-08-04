@@ -6,15 +6,7 @@
 
 <div class="row">
     <div class="col-3">
-        <h2 class="d-inline p-2">@Model.name</h2>
-        @if (Model.amount < 20)
-        {
-            <span class="badge badge-danger">@Model.amount @Model.typeMoney</span>
-        }
-        else
-        {
-            <span class="badge badge-primary">@Model.amount @Model.typeMoney</span>
-        }
+        <div id="titleDep"></div>
     </div>
 
     <div class="col">
@@ -66,9 +58,10 @@
 
 
 @using System.Web.Optimization
-@Scripts.Render("~/Scripts/my/depo_details.js")
-@Scripts.Render("~/Scripts/my/jqGridDepo.js")
-@Scripts.Render("~/Scripts/my/Excel.js")
+@Scripts.Render("~/Scripts/my/depository/charts_current.js")
+@Scripts.Render("~/Scripts/my/depository/jqGrid.js")
+@Scripts.Render("~/Scripts/my/common/Excel.js")
+@Scripts.Render("~/Scripts/my/depository/buttons_details.js")
 
 
 <!-- Rename -->
@@ -76,31 +69,26 @@
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">
-
                 <h4 class="modal-title">New name</h4>
+                <p id="err_rename_depo" class="bg-danger"></p>
             </div>
             <div class="modal-body">
-                @using (Html.BeginForm())
-                {
+                <form name="rename_depo" action="#" method="post" onsubmit="return false">
                     @Html.AntiForgeryToken()
-
-
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                    @Html.HiddenFor(model => model.id)
-
-                    <div class="form-group">
-                        <div class="col-xs-2">
-                            @Html.EditorFor(model => model.name, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.name, "", new { @class = "text-danger" })
+                    <!--new name-->
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">New name</span>
                         </div>
+                        <input type="text" class="form-control" placeholder="" name="name">
                     </div>
                     <div class="form-group">
                         <div class="col-md-offset-2 col-md-10" style="display: flex;">
-                            <input type="submit" value="Save" class="btn btn-success" formaction="../Rename" />
+                            <input type="submit" value="Save" class="btn btn-success" id="button_rename_depo" />
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
                     </div>
-                }
+                </form>
             </div>
         </div>
     </div>
@@ -113,13 +101,12 @@
             <div class="modal-header">
 
                 <h4 class="modal-title">New financial operation</h4>
+                <p id="err_new_operation" class="bg-danger"></p>
             </div>
             <div class="modal-body">
-                @using (Html.BeginForm())
-                {
+                <form name="new_operation" action="#" method="post" onsubmit="return false">
                     @Html.AntiForgeryToken()
-                    <!--idDepository-->
-                    <input type="hidden" name="idDepository" value="@Model.id" />
+
                     <!--amount of money-->
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
@@ -143,47 +130,32 @@
                         <input type="radio" class="custom-control-input" id="customRadio" name="isSpending" value="false" checked>
                         <label class="custom-control-label" for="customRadio">Add</label>
                     </div>
-
-                    if (Model.amount > 5)
-                    {
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="customRadio2" name="isSpending" value="true" data-toggle="collapse" data-target="#category" aria-expanded="false" aria-controls="category">
-                            <label class="custom-control-label" for="customRadio2">Spend</label>
-                        </div>
-                    }
-
-                    <!--Category-->
-                    <div class="form-group collapse" id="category">
-                        <label for="exampleFormControlSelect1">Category </label>
-                        <select class="form-control" id="exampleFormControlSelect1" name="category">
-                            <option>Addition</option>
-                            <option>Home</option>
-                            <option>Repair</option>
-                            <option>Supermarkets</option>
-                            <option>Pharmacy</option>
-                            <option>Entertainment</option>
-                            <option>Transport</option>
-                            <option>Clothing</option>
-                            <option>Electronics</option>
-                            <option>Others</option>
-                        </select>
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" class="custom-control-input" id="customRadio2" name="isSpending" value="true">
+                        <label class="custom-control-label" for="customRadio2">Spend</label>
                     </div>
+                    <div id="select_category"></div>
+
                     <br />
                     <br />
                     <div class="form-group">
                         <div class="col-md-offset-2 col-md-10" style="display: flex;">
-                            <input type="submit" value="Push" class="btn btn-success" formaction="../Change" />
+                            <input type="button" value="Push" class="btn btn-success" id="button_operation_depo" />
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
                     </div>
-                }
+                </form>
             </div>
-            <div class="modal-footer">
-                In stock @Model.amount @Model.typeMoney
+            <div class="modal-footer" id="operation_footer">
+
             </div>
         </div>
     </div>
 </div>
+
+
+
+
 
 <!-- Delete -->
 <div class="modal fade" id="delete" role="dialog">
@@ -192,27 +164,22 @@
             <div class="modal-header">
 
                 <strong class="modal-title">Please, confirm this action.</strong>
+                <p id="err_delete_depo" class="bg-danger"></p>
             </div>
             <div class="modal-body">
-                @using (Html.BeginForm())
-                {
+                <form name="delete_depo" action="#" method="post" onsubmit="return false">
                     @Html.AntiForgeryToken()
-                    <input type="hidden" name="idDepository" value="@Model.id" />
                     <div class="form-group">
                         <div class="col-md-offset-2 col-md-10" style="display: flex;">
-                            <input type="submit" value="Confirm" class="btn btn-danger" formaction="../Delete" />
+                            <input type="button" value="Confirm" class="btn btn-danger" id="button_delete_depo" />
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
                     </div>
-                }
+                </form>
             </div>
         </div>
     </div>
 </div>
-
-
-
-
 
 
 

@@ -46,17 +46,19 @@ namespace FinApp.repo
 
         public Credit get(int id)
         {
-            throw new NotImplementedException();
+            return financeContext.credits.Where(i => i.id == id).First();
         }
 
         public void rename(string name, int id)
         {
-            throw new NotImplementedException();
+            financeContext.credits.Where(i => i.id == id).First().comment = name;
+            financeContext.SaveChanges();
         }
 
         public void deleteAll(string idUser)
         {
-            throw new NotImplementedException();
+            financeContext.credits.RemoveRange(financeContext.credits.Where(i => i.idUser == idUser).ToList());
+            financeContext.SaveChanges();
         }
     }
 }

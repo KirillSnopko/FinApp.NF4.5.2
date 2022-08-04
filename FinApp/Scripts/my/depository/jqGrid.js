@@ -1,7 +1,8 @@
 ﻿$(document).ready(function () {
-    var current_id_depo = window.location.href.split('Details/')[1];
+    var current_id_depo = window.location.href.split('Details?id=')[1];
+   
     $("#jqg").jqGrid({
-        url: '../HistoryById/' + current_id_depo,
+        url: '/Depository/HistoryById?id=' + current_id_depo,
         datatype: "json",
         colNames: ['Date', 'Category', 'Comment', 'Value', 'Status'],
         colModel: [

@@ -58,7 +58,7 @@
         @if (User.Identity.IsAuthenticated)
         {
             <a href="/Depository/List" class="btn btn-info" role="button"> Depositories <span class="badge"> <div id="dep_count"></div> </span></a>
-            <a href="/Credit/" class="btn btn-info" role="button">Credit <span class="badge"><div id="credit_count"></div></span></a>
+            <a href="/Credit/" class="btn btn-info" role="button">Credits <span class="badge"><div id="credit_count"></div></span></a>
             <div class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img src="~/image/account.png" height="40" width="40">
@@ -73,7 +73,7 @@
         else
         {
             <a href="/Depository/List" class="btn btn-info disabled" role="button">Depositories</a>
-            <a href="/Credit/" class="btn btn-info disabled" role="button">Credit</a>
+            <a href="/Credit/" class="btn btn-info disabled" role="button">Credits</a>
             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#login">Login</button>
         }
     </nav>
@@ -97,8 +97,8 @@
 
     <!--my scripts-->
     @using System.Web.Optimization
-    @Scripts.Render("~/Scripts/my/badges.js")
-    @Scripts.Render("~/Scripts/my/settings_user.js")
+    @Scripts.Render("~/Scripts/my/common/badges.js")
+    @Scripts.Render("~/Scripts/my/account/settings_user.js")
     @RenderSection("scripts", required: false)
 
     <!-- Settings -->

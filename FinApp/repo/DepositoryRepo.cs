@@ -45,7 +45,7 @@ namespace FinApp.repo
 
         public void delete(int id)
         {
-            financeContext.depositories.ToList().RemoveAt(id);
+            financeContext.depositories.Remove(financeContext.depositories.Where(i=>i.id ==id).First());
             financeContext.SaveChanges();
         }
 

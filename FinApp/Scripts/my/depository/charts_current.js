@@ -12,7 +12,7 @@
     ];
 
     $(window).on('load', function () {
-        var current_id_depo = window.location.href.split('Details/')[1];
+        var current_id_depo = window.location.href.split('Details?id=')[1];
 
         $.get('/api/Charts/Spending/CurrentDepository/CurrentMonth/' + current_id_depo, {},
             function (data) {

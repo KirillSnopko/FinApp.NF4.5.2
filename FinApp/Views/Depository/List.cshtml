@@ -7,34 +7,10 @@
 }
 
 <div class="d-inline-block">
-    <h4>Depositories <span class="badge badge-secondary">@Model.Count()</span></h4>
+    <h4>Depositories</h4>
 </div>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Value</th>
-            <th>Currency</th>
+<div id="depositories"></div>
 
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (Depository dep in Model)
-        {
-            <tr>
-                <td>@dep.name</td>
-                <td>@dep.typeDep</td>
-                <td>@dep.amount</td>
-                <td>@dep.typeMoney</td>
-                <td>
-                    @Html.ActionLink("Details", "Details", new { id = dep.id }, new { @class = "btn btn-secondary " })
-                </td>
-            </tr>
-        }
-
-    </tbody>
-</table>
 
 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#create">Create new</button>
 
@@ -45,10 +21,10 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">New depository</h4>
+                <div id="err_create" class="bg-danger"></div>
             </div>
             <div class="modal-body">
-                @using (Html.BeginForm())
-                {
+                <form name="create" action="#" method="post" onsubmit="return false">
                     @Html.AntiForgeryToken()
                     <!--Name-->
                     <div class="input-group mb-3">
@@ -87,11 +63,11 @@
                     <br />
                     <div class="form-group">
                         <div class="col-md-offset-2 col-md-10" style="display: flex;">
-                            <input type="submit" value="Create" class="btn btn-success" formaction="../Depository/Create" />
+                            <input type="button" value="Create" class="btn btn-success" id="button_create_depo" />
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
                     </div>
-                }
+                </form>
             </div>
         </div>
     </div>
@@ -120,8 +96,9 @@
 </div>
 
 @using System.Web.Optimization
-@Scripts.Render("~/Scripts/my/depo_list_charts.js")
-
+@Scripts.Render("~/Scripts/my/depository/charts_common.js")
+@Scripts.Render("~/Scripts/my/depository/table.js")
+@Scripts.Render("~/Scripts/my/depository/buttons_list.js")
 
 
 
