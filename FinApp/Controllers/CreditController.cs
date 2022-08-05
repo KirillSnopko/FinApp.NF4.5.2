@@ -40,18 +40,20 @@ namespace FinApp.Controllers
 
         public ActionResult Delete(int idCredit)
         {
-            financeService.CreditRepo().delete(idCredit);
-            financeService.OperationRepo().deleteByIdDepository(idCredit);
+            var idUser = User.Identity.GetUserId();
+            financeService.CreditRepo().delete(idCredit, idUser);
+            financeService.OperationRepo().deleteByIdDepository(idCredit, idUser);
             return Json(new { status = 200 });
         }
 
         public ActionResult Reduce(int idCredit, double value, string comment)
         {
-            Credit credit = financeService.CreditRepo().get(idCredit);
+            var idUser = User.Identity.GetUserId();
+            Credit credit = financeService.CreditRepo().get(idCredit, idUser);
             var diff = credit.balanceOwed - credit.returned;
             if (value <= diff)
             {
-                financeService.CreditRepo().reduce(idCredit, value);
+                financeService.CreditRepo().reduce(idCredit, value, idUser);
                 financeService.OperationRepo().SaveToHistory(idCredit, false, value, comment, User.Identity.GetUserId(), Category.Credit);
                 if (value == diff)
                 {
@@ -60,12 +62,17 @@ namespace FinApp.Controllers
                 }
                 return Json(new { status = 200 });
             }
+            if (diff == 0)
+            {
+                return Json(new { status = 500, message = "credit closed" });
+            }
             return Json(new { status = 500, message = "invalid value" });
         }
 
         public ActionResult HistoryById(int id)
         {
-            var history = financeService.OperationRepo().getByIdDepository(id).Select(i => new { date = i.created.ToString("U"), comment = i.comment, value = i.amountOfMoney }).ToList();
+            var idUser = User.Identity.GetUserId();
+            var history = financeService.OperationRepo().getByIdDepository(id, idUser).Select(i => new { date = i.created.ToString("U"), comment = i.comment, value = i.amountOfMoney }).ToList();
             return Json(history, JsonRequestBehavior.AllowGet);
         }
     }

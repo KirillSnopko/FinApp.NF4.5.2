@@ -32,10 +32,10 @@ namespace FinApp.service
             creditRepo.deleteAll(idUser);
         }
 
-        public void deleteDepository(int id)
+        public void deleteDepository(int id, string idUser)
         {
-            depositoryRepo.delete(id);
-            operationRepo.deleteByIdDepository(id);
+            depositoryRepo.delete(id, idUser);
+            operationRepo.deleteByIdDepository(id, idUser);
         }
 
         public CreditRepo CreditRepo()

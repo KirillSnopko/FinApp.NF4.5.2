@@ -1,6 +1,7 @@
 ﻿using ClosedXML.Excel;
 using FinApp.Entities.Finance;
 using FinApp.service.ifaces;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -22,12 +23,13 @@ namespace FinApp.Controllers
 
         public FileResult ExportById(int idDepository)
         {
+            var idUser = User.Identity.GetUserId();
             DataTable dt = new DataTable("Grid");
             dt.Columns.AddRange(new DataColumn[4] { new DataColumn("Date"),
                                             new DataColumn("Category"),
                                             new DataColumn("Comment"),
                                             new DataColumn("Value") });
-            List<FinanceOperation> history = financeService.OperationRepo().getByIdDepository(idDepository);
+            List<FinanceOperation> history = financeService.OperationRepo().getByIdDepository(idDepository, idUser);
             foreach (FinanceOperation fp in history)
             {
                 dt.Rows.Add(fp.created, Enum.GetName(typeof(Category), fp.category), fp.comment, fp.isSpending? ("-"+ fp.amountOfMoney):("+" + fp.amountOfMoney));

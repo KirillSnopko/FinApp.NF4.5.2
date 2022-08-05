@@ -16,9 +16,9 @@ namespace FinApp.repo
             this.financeContext = financeContext;
         }
 
-        public List<FinanceOperation> getByIdDepository(int idDepository)
+        public List<FinanceOperation> getByIdDepository(int idDepository, string idUser)
         {
-            return financeContext.operations.Where(i => i.idDepository == idDepository).ToList();
+            return financeContext.operations.Where(i => i.idDepository == idDepository && i.idUser == idUser).ToList();
         }
 
         public List<FinanceOperation> getByIdUser(string idUser)
@@ -33,9 +33,10 @@ namespace FinApp.repo
             financeContext.SaveChanges();
         }
 
-        public void delete(int idOperation)
+        public void delete(int idOperation, string idUser)
         {
-            financeContext.operations.ToList().RemoveAt(idOperation);
+            FinanceOperation fp = financeContext.operations.Where(i => i.id == idOperation && i.idUser == idUser).First();
+            financeContext.operations.Remove(fp);
             financeContext.SaveChanges();
         }
 
@@ -45,9 +46,9 @@ namespace FinApp.repo
             financeContext.SaveChanges();
         }
 
-        public void deleteByIdDepository(int idDepository)
+        public void deleteByIdDepository(int idDepository, string idUser)
         {
-            financeContext.operations.RemoveRange(financeContext.operations.Where(i=>i.idDepository==idDepository).ToList());
+            financeContext.operations.RemoveRange(financeContext.operations.Where(i => i.idDepository == idDepository && i.idUser == idUser).ToList());
             financeContext.SaveChanges();
         }
     }

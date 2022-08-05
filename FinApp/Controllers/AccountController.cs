@@ -85,7 +85,6 @@ namespace FinApp.Controllers
 
                 accountService.logout();
                 return Json(new { status = 200 });
-                //return RedirectToAction("Logout");
             }
             else
             {

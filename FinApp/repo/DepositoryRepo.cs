@@ -21,9 +21,9 @@ namespace FinApp.repo
             financeContext.SaveChanges();
         }
 
-        public void change(int idDepository, bool isSpending, double amountOfMoney)
+        public void change(int idDepository, bool isSpending, double amountOfMoney, string idUser)
         {
-            var depository = financeContext.depositories.Where(i => i.id == idDepository).First();
+            var depository = financeContext.depositories.Where(i => i.id == idDepository && i.idUser == idUser).First();
             if (isSpending)
             {
                 if (depository.amount >= amountOfMoney)
@@ -43,9 +43,9 @@ namespace FinApp.repo
             return financeContext.depositories.Where(i => i.idUser == idUser).Count();
         }
 
-        public void delete(int id)
+        public void delete(int id, string idUser)
         {
-            financeContext.depositories.Remove(financeContext.depositories.Where(i=>i.id ==id).First());
+            financeContext.depositories.Remove(financeContext.depositories.Where(i => i.id == id && i.idUser == idUser).First());
             financeContext.SaveChanges();
         }
 
@@ -54,14 +54,14 @@ namespace FinApp.repo
             return financeContext.depositories.Where(i => i.idUser == id).ToList();
         }
 
-        public Depository get(int id)
+        public Depository get(int id, string idUser)
         {
-            return financeContext.depositories.Where(i => i.id == id).First();
+            return financeContext.depositories.Where(i => i.id == id && i.idUser == idUser).First();
         }
 
-        public void rename(string name, int id)
+        public void rename(string name, int id, string idUser)
         {
-            financeContext.depositories.First(i => i.id == id).name = name;
+            financeContext.depositories.First(i => i.id == id && i.idUser == idUser).name = name;
             financeContext.SaveChanges();
         }
 

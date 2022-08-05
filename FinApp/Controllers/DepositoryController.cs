@@ -40,7 +40,8 @@ namespace FinApp.Controllers
         [HttpGet]
         public ActionResult GetById(int id)
         {
-            Depository dep = financeService.DepositoryRepo().get(id);
+            var idUser = User.Identity.GetUserId();
+            Depository dep = financeService.DepositoryRepo().get(id, idUser);
             var data = new { id = dep.id, name = dep.name, value = dep.amount, currency = Enum.GetName(typeof(TypeMoney), dep.typeMoney) };
             return Json(data, JsonRequestBehavior.AllowGet);
         }
@@ -67,9 +68,10 @@ namespace FinApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Rename(string name, int id)
         {
+            var idUser = User.Identity.GetUserId();
             if (name != null || name.Trim() != "")
             {
-                financeService.DepositoryRepo().rename(name, id);
+                financeService.DepositoryRepo().rename(name, id, idUser);
                 return Json(new { status = 200 });
             }
             return Json(new { status = 500, message = "invalid value" });
@@ -88,7 +90,8 @@ namespace FinApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id)
         {
-            financeService.deleteDepository(id);
+            var idUser = User.Identity.GetUserId();
+            financeService.deleteDepository(id, idUser);
             return Json(new { status = 200 });
         }
 
@@ -97,11 +100,11 @@ namespace FinApp.Controllers
         public ActionResult Change(int idDepository, bool isSpending, string amountOfMoney, string comment, Category category)
         {
             var idUser = User.Identity.GetUserId();
-            double value = financeService.DepositoryRepo().get(idDepository).amount;
+            double value = financeService.DepositoryRepo().get(idDepository, idUser).amount;
             double amount = Double.Parse(amountOfMoney, CultureInfo.InvariantCulture);
             if (value >= amount)
             {
-                financeService.DepositoryRepo().change(idDepository, isSpending, amount);
+                financeService.DepositoryRepo().change(idDepository, isSpending, amount, idUser);
                 financeService.OperationRepo().SaveToHistory(idDepository, isSpending, amount, comment, idUser, category);
                 return Json(new { status = 200 });
             }
@@ -111,7 +114,8 @@ namespace FinApp.Controllers
         [HttpGet]
         public ActionResult HistoryById(int id)
         {
-            var history = financeService.OperationRepo().getByIdDepository(id).Select(i => new { date = i.created.ToString("dddd, dd MMMM yyyy HH:mm:ss"), category = Enum.GetName(typeof(Category), i.category), comment = i.comment, value = i.isSpending ? ("-" + i.amountOfMoney).ToString() : ("+" + i.amountOfMoney).ToString(), status = i.isSpending }).ToList();
+            var idUser = User.Identity.GetUserId();
+            var history = financeService.OperationRepo().getByIdDepository(id, idUser).Select(i => new { date = i.created.ToString("dddd, dd MMMM yyyy HH:mm:ss"), category = Enum.GetName(typeof(Category), i.category), comment = i.comment, value = i.isSpending ? ("-" + i.amountOfMoney).ToString() : ("+" + i.amountOfMoney).ToString(), status = i.isSpending }).ToList();
             return Json(history, JsonRequestBehavior.AllowGet);
         }
     }

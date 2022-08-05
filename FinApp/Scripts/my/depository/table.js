@@ -3,7 +3,7 @@
     $(window).on('load', function () {
         $.get("/Depository/GetData", {},
             function (credits) {
-                var table = $('<table class="table table-striped"><tr><th>Name</th><th>Type</th><th>Value</th><th>Currency</th></tr>');
+                var table = $('<table class="table table-striped"><tr><th>Name</th><th>Type</th><th>Value</th><th>Currency</th><th></th></tr>');
                 $(credits).each(function (index, item) {
                     var id = item.id;
                     var name = item.name;
