@@ -41,7 +41,7 @@ namespace FinApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(string name, string password)
         {
-            if (name.Trim() != string.Empty && name != null && password != null && password.Trim() != string.Empty)
+            if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(password))
             {
                 accountService.login(name, password);
                 return Json(new { status = 200 });
@@ -54,7 +54,7 @@ namespace FinApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Register(string name, string password, string email)
         {
-            if (name.Trim() != string.Empty && password.Trim() != string.Empty && email.Trim() != string.Empty && name != null && password != null && email != null)
+            if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(password) && !string.IsNullOrWhiteSpace(email))
             {
                 accountService.register(name, password, email);
                 logger.Info($"created new user => name: {name}, email: {email}");
@@ -77,7 +77,7 @@ namespace FinApp.Controllers
         {
             string name = User.Identity.GetUserName();
             string id = User.Identity.GetUserId();
-            if (password.Trim() != string.Empty && password != null)
+            if (!string.IsNullOrWhiteSpace(password))
             {
                 accountService.removeAccount(password, name);
                 financeService.cleanUpAccountById(id);
@@ -97,7 +97,7 @@ namespace FinApp.Controllers
         [ValidateAntiForgeryToken]
         public JsonResult Rename(string name)
         {
-            if (name.Trim() != string.Empty && name != null)
+            if (!string.IsNullOrWhiteSpace(name))
             {
                 var idUser = User.Identity.GetUserId();
                 var currentName = User.Identity.Name;
@@ -113,7 +113,7 @@ namespace FinApp.Controllers
         [ValidateAntiForgeryToken]
         public JsonResult ChangePassword(string old_password, string new_password)
         {
-            if (new_password.Trim() != string.Empty && old_password.Trim() != string.Empty && new_password != null && old_password != null)
+            if (!string.IsNullOrWhiteSpace(new_password) && !string.IsNullOrWhiteSpace(old_password))
             {
                 var idUser = User.Identity.GetUserId();
                 var userName = User.Identity.Name;

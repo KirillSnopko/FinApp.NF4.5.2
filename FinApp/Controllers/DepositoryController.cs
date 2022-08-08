@@ -69,7 +69,7 @@ namespace FinApp.Controllers
         public ActionResult Rename(string name, int id)
         {
             var idUser = User.Identity.GetUserId();
-            if (name != null || name.Trim() != "")
+            if (!string.IsNullOrWhiteSpace(name))
             {
                 financeService.DepositoryRepo().rename(name, id, idUser);
                 return Json(new { status = 200 });
