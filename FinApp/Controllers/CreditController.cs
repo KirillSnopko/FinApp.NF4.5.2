@@ -72,7 +72,7 @@ namespace FinApp.Controllers
         public ActionResult HistoryById(int id)
         {
             var idUser = User.Identity.GetUserId();
-            var history = financeService.OperationRepo().getByIdDepository(id, idUser).Select(i => new { date = i.created.ToString("U"), comment = i.comment, value = i.amountOfMoney }).ToList();
+            var history = financeService.OperationRepo().getByIdDepository(id, idUser).Where(i=> i.category == Category.Credit) .Select(i => new { date = i.created.ToString("U"), comment = i.comment, value = i.amountOfMoney }).ToList();
             return Json(history, JsonRequestBehavior.AllowGet);
         }
     }
