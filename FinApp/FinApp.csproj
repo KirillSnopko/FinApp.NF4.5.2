@@ -318,6 +318,8 @@
     <Content Include="Scripts\jquery.jqGrid.js" />
     <Content Include="Scripts\jquery.jqGrid.min.js" />
     <Content Include="Scripts\jquery.jqGrid.src.js" />
+    <Content Include="Scripts\my\account\login.js" />
+    <Content Include="Scripts\my\account\registr.js" />
     <Content Include="Scripts\my\common\badges.js" />
     <Content Include="Scripts\my\credit\buttons.js" />
     <Content Include="Scripts\my\depository\buttons_details.js" />

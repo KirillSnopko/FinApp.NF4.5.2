@@ -44,9 +44,9 @@ namespace FinApp.Controllers
             if (name.Trim() != string.Empty && name != null && password != null && password.Trim() != string.Empty)
             {
                 accountService.login(name, password);
-                return Redirect("/");
+                return Json(new { status = 200 });
             }
-            else { return Json("Invalid input"); }
+            else { return Json(new { status = 500, message = "invalid input" }); }
         }
 
         [HttpPost]
@@ -58,9 +58,9 @@ namespace FinApp.Controllers
             {
                 accountService.register(name, password, email);
                 logger.Info($"created new user => name: {name}, email: {email}");
-                return RedirectToAction("Index");
+                return Json(new { status = 200 });
             }
-            return Json("invalid input");
+            return Json(new { status = 500, message = "invalid input" });
         }
 
         [Authorize]

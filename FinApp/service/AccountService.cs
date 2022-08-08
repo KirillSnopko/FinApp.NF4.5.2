@@ -74,10 +74,11 @@ namespace FinApp.service
         public void register(string name, string password, string email)
         {
             UserApp user = new UserApp { UserName = name, Email = email };
+          
             IdentityResult result = UserManager.Create(user, password);
             if (!result.Succeeded)
             {
-                throw new AccountServiceException("Exception with new user adding");
+                throw new AccountServiceException("Required \npassword: lenght = 6, uppercase, lowercase;\nlogin: allow Only Alphanumeric user names;\n email: only unique."); 
             }
         }
 
