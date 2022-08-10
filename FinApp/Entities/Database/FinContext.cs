@@ -7,27 +7,15 @@ using System.Web;
 
 namespace FinApp.Entities.Database
 {
-    public class FinContext:DbContext
+    public class FinContext : DbContext
     {
-        public FinContext()
-         : base("FinContext")
-        { }
-
-        public static FinContext Create()
-        {
-            return new FinContext();
-        }
-
-        
-        static FinContext()
+        public FinContext() : base("FinContext")
         {
             System.Data.Entity.Database.SetInitializer<FinContext>(new DropCreateDatabaseIfModelChanges<FinContext>());
         }
-        
 
         public DbSet<Credit> credits { get; set; }
         public DbSet<Depository> depositories { get; set; }
         public DbSet<FinanceOperation> operations { get; set; }
-
     }
 }

@@ -363,6 +363,7 @@
     <Compile Include="Entities\Identity\Managers\RoleManagerImpl.cs" />
     <Compile Include="Entities\Identity\Managers\UserManagerImpl.cs" />
     <Compile Include="Exceptions\AccountServiceException.cs" />
+    <Compile Include="Exceptions\FinContextException.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -373,9 +374,15 @@
     <Compile Include="repo\ifaces\IDepositoryRepo.cs" />
     <Compile Include="repo\ifaces\IOperationRepo.cs" />
     <Compile Include="repo\OperationRepo.cs" />
+    <Compile Include="repo\DbTransaction.cs" />
     <Compile Include="service\AccountService.cs" />
-    <Compile Include="service\FinanceService.cs" />
+    <Compile Include="service\ChartsService.cs" />
+    <Compile Include="service\CreditService.cs" />
+    <Compile Include="service\DepositoryService.cs" />
     <Compile Include="service\ifaces\IAccountService.cs" />
+    <Compile Include="service\ifaces\IChartsService.cs" />
+    <Compile Include="service\ifaces\ICreditService.cs" />
+    <Compile Include="service\ifaces\IDepositoryService.cs" />
     <Compile Include="service\ifaces\IFinanceService.cs" />
   </ItemGroup>
   <ItemGroup>

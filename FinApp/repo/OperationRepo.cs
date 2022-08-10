@@ -9,7 +9,7 @@ namespace FinApp.repo
 {
     public class OperationRepo : IOperationRepo
     {
-        public FinContext financeContext { get; set; }
+        private FinContext financeContext;
 
         public OperationRepo(FinContext financeContext)
         {

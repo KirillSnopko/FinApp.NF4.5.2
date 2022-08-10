@@ -12,21 +12,19 @@ using System.Collections.Generic;
 using FinApp.service;
 using System.Web.Security;
 using FinApp.service.ifaces;
-using FinApp.Exceptions;
 using System;
 using log4net;
+using FinApp.Exceptions;
 
 namespace FinApp.Controllers
 {
     public class AccountController : Controller
     {
-        private IFinanceService financeService;
         private IAccountService accountService;
         private ILog logger;
 
-        public AccountController(IFinanceService financeService, IAccountService accountService, ILog loggerAccount)
+        public AccountController(IAccountService accountService, ILog loggerAccount)
         {
-            this.financeService = financeService;
             this.accountService = accountService;
             this.logger = loggerAccount;
         }
@@ -82,9 +80,8 @@ namespace FinApp.Controllers
             string name = User.Identity.GetUserName();
             string id = User.Identity.GetUserId();
             accountService.removeAccount(password, name);
-            financeService.cleanUpAccountById(id);
-            logger.Info($"removed  user => id: {id}, name: {name}");
             accountService.logout();
+            logger.Info($"removed  user => id: {id}, name: {name}");
             return Json(new { status = 200 });
         }
 

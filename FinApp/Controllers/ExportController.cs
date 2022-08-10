@@ -6,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace FinApp.Controllers
@@ -15,10 +13,10 @@ namespace FinApp.Controllers
     [Authorize]
     public class ExportController : Controller
     {
-        private IFinanceService financeService;
-        public ExportController(IFinanceService financeService)
+        private IDepositoryService depositoryService;
+        public ExportController(IDepositoryService depositoryService)
         {
-            this.financeService = financeService;
+            this.depositoryService = depositoryService;
         }
 
         public FileResult ExportById(int idDepository)
@@ -29,10 +27,10 @@ namespace FinApp.Controllers
                                             new DataColumn("Category"),
                                             new DataColumn("Comment"),
                                             new DataColumn("Value") });
-            List<FinanceOperation> history = financeService.OperationRepo().getByIdDepository(idDepository, idUser);
+            List<FinanceOperation> history = depositoryService.historyById(idDepository, idUser);
             foreach (FinanceOperation fp in history)
             {
-                dt.Rows.Add(fp.created, Enum.GetName(typeof(Category), fp.category), fp.comment, fp.isSpending? ("-"+ fp.amountOfMoney):("+" + fp.amountOfMoney));
+                dt.Rows.Add(fp.created, Enum.GetName(typeof(Category), fp.category), fp.comment, fp.isSpending ? ("-" + fp.amountOfMoney) : ("+" + fp.amountOfMoney));
             }
             using (XLWorkbook wb = new XLWorkbook())
             {

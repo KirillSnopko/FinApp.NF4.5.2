@@ -14,11 +14,13 @@ namespace FinApp.Controllers
     [Authorize]
     public class ChartsController : ApiController
     {
-        private readonly IFinanceService financeService;
+        private IChartsService chartsService;
+        private IDepositoryService depositoryService;
 
-        public ChartsController(IFinanceService financeService)
+        public ChartsController(IChartsService chartsService, IDepositoryService depositoryService)
         {
-            this.financeService = financeService;
+            this.chartsService = chartsService;
+            this.depositoryService = depositoryService;
         }
 
         public ChartsController() { }
@@ -28,8 +30,8 @@ namespace FinApp.Controllers
         public IHttpActionResult getSpendingDataCurDepCurMonth(int idDepository)
         {
             var idUser = User.Identity.GetUserId();
-            List<FinanceOperation> financeOperations = financeService.OperationRepo().getByIdDepository(idDepository, idUser).Where(i => i.isSpending == true && i.category != Category.Credit).ToList();
-            var data = financeOperations.Where(i => i.created.Month == DateTime.Now.Month).GroupBy(i => i.category).Select(i => new { Category = Enum.GetName(typeof(Category), i.Key), Sum = i.Sum(x => x.amountOfMoney) }).ToList();
+            List<FinanceOperation> financeOperations = chartsService.getSpendingDataCurDepCurMonth(idDepository, idUser);
+            var data = financeOperations.GroupBy(i => i.category).Select(i => new { Category = Enum.GetName(typeof(Category), i.Key), Sum = i.Sum(x => x.amountOfMoney) }).ToList();
             return Json(data);
         }
 
@@ -38,8 +40,8 @@ namespace FinApp.Controllers
         public IHttpActionResult getAddDataCurDepCurMonth(int idDepository)
         {
             var idUser = User.Identity.GetUserId();
-            List<FinanceOperation> financeOperations = financeService.OperationRepo().getByIdDepository(idDepository, idUser).Where(i => i.isSpending == false && i.category != Category.Credit).ToList();
-            var data = financeOperations.Where(i => i.created.Month == DateTime.Now.Month).GroupBy(i => i.category).Select(i => new { Category = Enum.GetName(typeof(Category), i.Key), Sum = i.Sum(x => x.amountOfMoney) }).ToList();
+            List<FinanceOperation> financeOperations = chartsService.getAddDataCurDepCurMonth(idDepository, idUser);
+            var data = financeOperations.GroupBy(i => i.category).Select(i => new { Category = Enum.GetName(typeof(Category), i.Key), Sum = i.Sum(x => x.amountOfMoney) }).ToList();
             return Json(data);
         }
 
@@ -48,8 +50,8 @@ namespace FinApp.Controllers
         public IHttpActionResult getSpendDataAllDepCurMonth()
         {
             string idUser = User.Identity.GetUserId();
-            List<FinanceOperation> financeOperations = financeService.OperationRepo().getByIdUser(idUser).Where(i => i.isSpending == true && i.category != Category.Credit).ToList();
-            var data = financeOperations.Where(i => i.created.Month == DateTime.Now.Month).GroupBy(i => i.idDepository).Select(i => new { Depository = financeService.DepositoryRepo().get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
+            List<FinanceOperation> financeOperations = chartsService.getSpendDataAllDepCurMonth(idUser);
+            var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = depositoryService.get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
             return Json(data);
         }
 
@@ -58,8 +60,8 @@ namespace FinApp.Controllers
         public IHttpActionResult getAddDataAllDepCurMonth()
         {
             string idUser = User.Identity.GetUserId();
-            List<FinanceOperation> financeOperations = financeService.OperationRepo().getByIdUser(idUser).Where(i => i.isSpending == false && i.category != Category.Credit).ToList();
-            var data = financeOperations.Where(i => i.created.Month == DateTime.Now.Month).GroupBy(i => i.idDepository).Select(i => new { Depository = financeService.DepositoryRepo().get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
+            List<FinanceOperation> financeOperations = chartsService.getAddDataAllDepCurMonth(idUser);
+            var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = depositoryService.get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
             return Json(data);
         }
 
@@ -68,8 +70,8 @@ namespace FinApp.Controllers
         public IHttpActionResult getSpendDataAllDepAllTime()
         {
             string idUser = User.Identity.GetUserId();
-            List<FinanceOperation> financeOperations = financeService.OperationRepo().getByIdUser(idUser).Where(i => i.isSpending == true && i.category != Category.Credit).ToList();
-            var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = financeService.DepositoryRepo().get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
+            List<FinanceOperation> financeOperations = chartsService.getSpendDataAllDepAllTime(idUser);
+            var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = depositoryService.get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
             return Json(data);
         }
 
@@ -78,8 +80,8 @@ namespace FinApp.Controllers
         public IHttpActionResult getAddDataAllDepAllTime()
         {
             string idUser = User.Identity.GetUserId();
-            List<FinanceOperation> financeOperations = financeService.OperationRepo().getByIdUser(idUser).Where(i => i.isSpending == false && i.category != Category.Credit).ToList();
-            var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = financeService.DepositoryRepo().get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
+            List<FinanceOperation> financeOperations = chartsService.getAddDataAllDepAllTime(idUser);
+            var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = depositoryService.get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
             return Json(data);
         }
     }

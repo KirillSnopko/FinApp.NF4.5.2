@@ -24,31 +24,31 @@
                 }
                 if (dataDoughnut.length == 0) {
                     $(doughnut).html('<kbd>Chart. No data for current month</kbd>');
-                }
-
-                new Chart(myChartDoughnut, {
-                    type: 'doughnut',
-                    data: {
-                        labels: labelsDoughnut,
-                        datasets: [{
-                            label: '# of Tomatoes',
-                            data: dataDoughnut,
-                            backgroundColor: colors,
-                            borderColor: colors,
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        //cutoutPercentage: 40,
-                        responsive: false,
-                        plugins: {
-                            title: {
-                                display: true,
-                                text: 'Expenses for the current month'
+                } else {
+                    new Chart(myChartDoughnut, {
+                        type: 'doughnut',
+                        data: {
+                            labels: labelsDoughnut,
+                            datasets: [{
+                                label: '# of Tomatoes',
+                                data: dataDoughnut,
+                                backgroundColor: colors,
+                                borderColor: colors,
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            //cutoutPercentage: 40,
+                            responsive: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Expenses for the current month'
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                }
             });
     })
 })

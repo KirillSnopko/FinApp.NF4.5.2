@@ -5,7 +5,7 @@ using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
 
-
+[assembly: OwinStartup(typeof(FinApp.App_Start.IdentityConfig))]
 namespace FinApp.App_Start
 {
     public class IdentityConfig
@@ -13,7 +13,6 @@ namespace FinApp.App_Start
         public void Configuration(IAppBuilder app)
         {
             app.CreatePerOwinContext<UserContext>(UserContext.Create);
-            app.CreatePerOwinContext<FinContext>(FinContext.Create);
             app.CreatePerOwinContext<UserManagerImpl>(UserManagerImpl.Create);
             app.CreatePerOwinContext<RoleManagerImpl>(RoleManagerImpl.Create);
 

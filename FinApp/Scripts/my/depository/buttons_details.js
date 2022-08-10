@@ -147,7 +147,8 @@
                 },
                 function (status) {
                     if (status['status'] == 200) {
-                        window.open('/Depository/List');
+                        location.assign('/Depository/List');
+                       // window.open('/Depository/List');
                     } else {
                         document.getElementById('err_delete_depo').innerHTML = status['message'];
                     }

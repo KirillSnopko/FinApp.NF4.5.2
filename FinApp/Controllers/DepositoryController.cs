@@ -9,19 +9,21 @@ using System.Globalization;
 using System.Web;
 using System.Web.Mvc;
 using System.Linq;
+using FinApp.Exceptions;
 
 namespace FinApp.Controllers
 {
     [Authorize]
     public class DepositoryController : Controller
     {
-        private IFinanceService financeService;
+        private IDepositoryService depositoryService;
+        private ICreditService creditService;
 
-        public DepositoryController(IFinanceService financeService)
+        public DepositoryController(IDepositoryService depositoryService, ICreditService creditService)
         {
-            this.financeService = financeService;
+            this.depositoryService = depositoryService;
+            this.creditService = creditService;
         }
-
 
         [HttpGet]
         public ActionResult List()
@@ -33,17 +35,18 @@ namespace FinApp.Controllers
         public ActionResult GetData()
         {
             var id = User.Identity.GetUserId();
-            var data = financeService.DepositoryRepo().depositoriesByUserId(id).Select(i => new { id = i.id, name = i.name, type = Enum.GetName(typeof(TypeDep), i.typeDep), value = i.amount, currency = Enum.GetName(typeof(TypeMoney), i.typeMoney) }).ToList();
-            return Json(data, JsonRequestBehavior.AllowGet);
+            var data = depositoryService.depositoriesByUserId(id);
+            var response = data.Select(i => new { id = i.id, name = i.name, type = Enum.GetName(typeof(TypeDep), i.typeDep), value = i.amount, currency = Enum.GetName(typeof(TypeMoney), i.typeMoney) }).ToList();
+            return Json(response, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
         public ActionResult GetById(int id)
         {
             var idUser = User.Identity.GetUserId();
-            Depository dep = financeService.DepositoryRepo().get(id, idUser);
-            var data = new { id = dep.id, name = dep.name, value = dep.amount, currency = Enum.GetName(typeof(TypeMoney), dep.typeMoney) };
-            return Json(data, JsonRequestBehavior.AllowGet);
+            Depository dep = depositoryService.get(id, idUser);
+            var response = new { id = dep.id, name = dep.name, value = dep.amount, currency = Enum.GetName(typeof(TypeMoney), dep.typeMoney) };
+            return Json(response, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -52,7 +55,7 @@ namespace FinApp.Controllers
         {
             var id = User.Identity.GetUserId();
             Depository depository = new Depository { idUser = id, typeDep = tDep, typeMoney = tMoney, name = name, amount = amount };
-            financeService.DepositoryRepo().add(depository);
+            depositoryService.add(depository);
             return Json(new { status = 200 });
         }
 
@@ -60,7 +63,6 @@ namespace FinApp.Controllers
 
         public ActionResult Details(int id)
         {
-            var idUser = User.Identity.GetUserId();
             return View();
         }
 
@@ -68,21 +70,21 @@ namespace FinApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Rename(string name, int id)
         {
-            var idUser = User.Identity.GetUserId();
-            if (!string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(name))
             {
-                financeService.DepositoryRepo().rename(name, id, idUser);
-                return Json(new { status = 200 });
+                return Json(new { status = 500, message = "invalid value" });
             }
-            return Json(new { status = 500, message = "invalid value" });
+            var idUser = User.Identity.GetUserId();
+            depositoryService.rename(name, id, idUser);
+            return Json(new { status = 200 });
         }
 
         [HttpGet]
         public ActionResult Count()
         {
             var idUser = User.Identity.GetUserId();
-            int dep_count = financeService.DepositoryRepo().count(idUser);
-            int credit_count = financeService.CreditRepo().count(idUser);
+            int dep_count = depositoryService.count(idUser);
+            int credit_count = creditService.count(idUser);
             return Json(new { dep_count, credit_count }, JsonRequestBehavior.AllowGet);
         }
 
@@ -91,7 +93,7 @@ namespace FinApp.Controllers
         public ActionResult Delete(int id)
         {
             var idUser = User.Identity.GetUserId();
-            financeService.deleteDepository(id, idUser);
+            depositoryService.delete(id, idUser);
             return Json(new { status = 200 });
         }
 
@@ -100,23 +102,32 @@ namespace FinApp.Controllers
         public ActionResult Change(int idDepository, bool isSpending, string amountOfMoney, string comment, Category category)
         {
             var idUser = User.Identity.GetUserId();
-            double value = financeService.DepositoryRepo().get(idDepository, idUser).amount;
             double amount = Double.Parse(amountOfMoney, CultureInfo.InvariantCulture);
-            if (value >= amount)
-            {
-                financeService.DepositoryRepo().change(idDepository, isSpending, amount, idUser);
-                financeService.OperationRepo().SaveToHistory(idDepository, isSpending, amount, comment, idUser, category);
-                return Json(new { status = 200 });
-            }
-            return Json(new { status = 500, message = $"Short of money ({value}<{amount}" });
+            depositoryService.change(idDepository, isSpending, amount, idUser, comment, category);
+            return Json(new { status = 200 });
         }
 
         [HttpGet]
         public ActionResult HistoryById(int id)
         {
             var idUser = User.Identity.GetUserId();
-            var history = financeService.OperationRepo().getByIdDepository(id, idUser).Select(i => new { date = i.created.ToString("dddd, dd MMMM yyyy HH:mm:ss"), category = Enum.GetName(typeof(Category), i.category), comment = i.comment, value = i.isSpending ? ("-" + i.amountOfMoney).ToString() : ("+" + i.amountOfMoney).ToString(), status = i.isSpending }).ToList();
-            return Json(history, JsonRequestBehavior.AllowGet);
+            var history = depositoryService.historyById(id, idUser);
+            var response = history.Select(i => new { date = i.created.ToString("dddd, dd MMMM yyyy HH:mm:ss"), category = Enum.GetName(typeof(Category), i.category), comment = i.comment, value = i.isSpending ? ("-" + i.amountOfMoney).ToString() : ("+" + i.amountOfMoney).ToString(), status = i.isSpending }).ToList();
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            if (filterContext.Exception != null)
+            {
+                var response = new { status = 500, message = filterContext.Exception.Message };
+                filterContext.Result = new JsonResult()
+                {
+                    JsonRequestBehavior = JsonRequestBehavior.AllowGet,
+                    Data = response
+                };
+                filterContext.ExceptionHandled = true;
+            }
         }
     }
 }
