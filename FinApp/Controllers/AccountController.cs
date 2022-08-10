@@ -41,12 +41,12 @@ namespace FinApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(string name, string password)
         {
-            if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(password))
             {
-                accountService.login(name, password);
-                return Json(new { status = 200 });
+                return Json(new { status = 500, message = "invalid input" });
             }
-            else { return Json(new { status = 500, message = "invalid input" }); }
+            accountService.login(name, password);
+            return Json(new { status = 200 });
         }
 
         [HttpPost]
@@ -54,13 +54,13 @@ namespace FinApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Register(string name, string password, string email)
         {
-            if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(password) && !string.IsNullOrWhiteSpace(email))
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(email))
             {
-                accountService.register(name, password, email);
-                logger.Info($"created new user => name: {name}, email: {email}");
-                return Json(new { status = 200 });
+                return Json(new { status = 500, message = "invalid input" });
             }
-            return Json(new { status = 500, message = "invalid input" });
+            accountService.register(name, password, email);
+            logger.Info($"created new user => name: {name}, email: {email}");
+            return Json(new { status = 200 });
         }
 
         [Authorize]
@@ -75,21 +75,17 @@ namespace FinApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Remove(string password)
         {
-            string name = User.Identity.GetUserName();
-            string id = User.Identity.GetUserId();
-            if (!string.IsNullOrWhiteSpace(password))
-            {
-                accountService.removeAccount(password, name);
-                financeService.cleanUpAccountById(id);
-                logger.Info($"removed  user => id: {id}, name: {name}");
-
-                accountService.logout();
-                return Json(new { status = 200 });
-            }
-            else
+            if (string.IsNullOrWhiteSpace(password))
             {
                 return Json(new { status = 500, message = "invalid password" });
             }
+            string name = User.Identity.GetUserName();
+            string id = User.Identity.GetUserId();
+            accountService.removeAccount(password, name);
+            financeService.cleanUpAccountById(id);
+            logger.Info($"removed  user => id: {id}, name: {name}");
+            accountService.logout();
+            return Json(new { status = 200 });
         }
 
         [Authorize]
@@ -97,15 +93,15 @@ namespace FinApp.Controllers
         [ValidateAntiForgeryToken]
         public JsonResult Rename(string name)
         {
-            if (!string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(name))
             {
-                var idUser = User.Identity.GetUserId();
-                var currentName = User.Identity.Name;
-                accountService.rename(name, idUser);
-                logger.Info($"renamed user => id: {idUser}, old name: {currentName}, new name: {name}");
-                return Json(new { status = 200 });
+                return Json(new { status = 500, message = "invalid input" });
             }
-            return Json(new { status = 500, message = "invalid input" });
+            var idUser = User.Identity.GetUserId();
+            var currentName = User.Identity.Name;
+            accountService.rename(name, idUser);
+            logger.Info($"renamed user => id: {idUser}, old name: {currentName}, new name: {name}");
+            return Json(new { status = 200 });
         }
 
         [Authorize]
@@ -113,22 +109,22 @@ namespace FinApp.Controllers
         [ValidateAntiForgeryToken]
         public JsonResult ChangePassword(string old_password, string new_password)
         {
-            if (!string.IsNullOrWhiteSpace(new_password) && !string.IsNullOrWhiteSpace(old_password))
+            if (string.IsNullOrWhiteSpace(new_password) || string.IsNullOrWhiteSpace(old_password))
             {
-                var idUser = User.Identity.GetUserId();
-                var userName = User.Identity.Name;
-                accountService.changePassword(old_password, new_password, userName);
-                logger.Info($"user changed password => id: {idUser}, name: {userName}");
-                return Json(new { status = 200 });
+                return Json(new { status = 500, message = "invalid input" });
             }
-            return Json(new { status = 500, message = "invalid input" });
+            var idUser = User.Identity.GetUserId();
+            var userName = User.Identity.Name;
+            accountService.changePassword(old_password, new_password, userName);
+            logger.Info($"user changed password => id: {idUser}, name: {userName}");
+            return Json(new { status = 200 });
         }
 
         protected override void OnException(ExceptionContext filterContext)
         {
-
             if (filterContext.Exception != null)
             {
+                logger.Error(filterContext.Exception);
                 var response = new { status = 509, message = filterContext.Exception.Message };
                 filterContext.Result = new JsonResult()
                 {
