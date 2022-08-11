@@ -350,3 +350,4 @@ MigrationBackup/
 .ionide/
 /FinApp/LogRuntimeError.log.*
 /FinApp/LogRuntimeInfo.log.*
+/desktop.ini
