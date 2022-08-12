@@ -383,7 +383,6 @@
     <Compile Include="service\ifaces\IChartsService.cs" />
     <Compile Include="service\ifaces\ICreditService.cs" />
     <Compile Include="service\ifaces\IDepositoryService.cs" />
-    <Compile Include="service\ifaces\IFinanceService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />

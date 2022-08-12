@@ -9,11 +9,11 @@ namespace FinApp.service.ifaces
 {
     public interface IChartsService
     {
-        List<FinanceOperation> getSpendingDataCurDepCurMonth(int idDepository, string idUser);
-        List<FinanceOperation> getAddDataCurDepCurMonth(int idDepository, string idUser);
-        List<FinanceOperation> getSpendDataAllDepCurMonth(string idUser);
-        List<FinanceOperation> getAddDataAllDepCurMonth(string idUser);
-        List<FinanceOperation> getSpendDataAllDepAllTime(string idUser);
-        List<FinanceOperation> getAddDataAllDepAllTime(string idUser);
+        dynamic getSpendingDataCurDepCurMonth(int idDepository, string idUser);
+        dynamic getAddDataCurDepCurMonth(int idDepository, string idUser);
+        dynamic getSpendDataAllDepCurMonth(string idUser);
+        dynamic getAddDataAllDepCurMonth(string idUser);
+        dynamic getSpendDataAllDepAllTime(string idUser);
+        dynamic getAddDataAllDepAllTime(string idUser);
     }
 }

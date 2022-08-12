@@ -13,46 +13,54 @@ namespace FinApp.service
     public class ChartsService : IChartsService
     {
         private IOperationRepo operationRepo;
+        private IDepositoryService depositoryService;
 
-        public ChartsService(IOperationRepo _operationRepo)
+        public ChartsService(IOperationRepo _operationRepo, IDepositoryService depositoryService)
         {
             operationRepo = _operationRepo;
+            this.depositoryService = depositoryService;
         }
 
-        public List<FinanceOperation> getAddDataAllDepAllTime(string idUser)
+        public dynamic getAddDataAllDepAllTime(string idUser)
         {
             List<FinanceOperation> financeOperations = operationRepo.getByIdUser(idUser).Where(i => i.isSpending == false && i.category != Category.Credit).ToList();
-            return financeOperations;
+            var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = depositoryService.get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
+            return data;
         }
 
-        public List<FinanceOperation> getAddDataAllDepCurMonth(string idUser)
+        public dynamic getAddDataAllDepCurMonth(string idUser)
         {
             List<FinanceOperation> financeOperations = operationRepo.getByIdUser(idUser).Where(i => i.isSpending == false && i.category != Category.Credit).Where(i => i.created.Month == DateTime.Now.Month).ToList();
-            return financeOperations;
+            var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = depositoryService.get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
+            return data;
         }
 
-        public List<FinanceOperation> getAddDataCurDepCurMonth(int idDepository, string idUser)
+        public dynamic getAddDataCurDepCurMonth(int idDepository, string idUser)
         {
             List<FinanceOperation> financeOperations = operationRepo.getByIdDepository(idDepository, idUser).Where(i => i.isSpending == false && i.category != Category.Credit).Where(i => i.created.Month == DateTime.Now.Month).ToList();
-            return financeOperations;
+            var data = financeOperations.GroupBy(i => i.category).Select(i => new { Category = Enum.GetName(typeof(Category), i.Key), Sum = i.Sum(x => x.amountOfMoney) }).ToList();
+            return data;
         }
 
-        public List<FinanceOperation> getSpendDataAllDepAllTime(string idUser)
+        public dynamic getSpendDataAllDepAllTime(string idUser)
         {
             List<FinanceOperation> financeOperations = operationRepo.getByIdUser(idUser).Where(i => i.isSpending == true && i.category != Category.Credit).ToList();
-            return financeOperations;
+            var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = depositoryService.get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
+            return data;
         }
 
-        public List<FinanceOperation> getSpendDataAllDepCurMonth(string idUser)
+        public dynamic getSpendDataAllDepCurMonth(string idUser)
         {
             List<FinanceOperation> financeOperations = operationRepo.getByIdUser(idUser).Where(i => i.isSpending == true && i.category != Category.Credit).Where(i => i.created.Month == DateTime.Now.Month).ToList();
-            return financeOperations;
+            var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = depositoryService.get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
+            return data;
         }
 
-        public List<FinanceOperation> getSpendingDataCurDepCurMonth(int idDepository, string idUser)
+        public dynamic getSpendingDataCurDepCurMonth(int idDepository, string idUser)
         {
             List<FinanceOperation> financeOperations = operationRepo.getByIdDepository(idDepository, idUser).Where(i => i.isSpending == true && i.category != Category.Credit).Where(i => i.created.Month == DateTime.Now.Month).ToList();
-            return financeOperations;
+            var data = financeOperations.GroupBy(i => i.category).Select(i => new { Category = Enum.GetName(typeof(Category), i.Key), Sum = i.Sum(x => x.amountOfMoney) }).ToList();
+            return data;
         }
     }
 }
