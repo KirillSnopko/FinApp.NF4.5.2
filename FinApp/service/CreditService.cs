@@ -22,8 +22,9 @@ namespace FinApp.service
             this.dbTransaction = dbTransaction;
         }
 
-        public void add(Credit credit)
+        public void add(double value, string comment, DateTime closeDate, string idUser)
         {
+            Credit credit = new Credit { balanceOwed = value, returned = 0, openDate = DateTime.Now, closeDate = closeDate, comment = comment, idUser = idUser };
             creditRepo.add(credit);
         }
 
@@ -32,9 +33,10 @@ namespace FinApp.service
             return creditRepo.count(idUser);
         }
 
-        public List<Credit> creditsByUserId(string id)
+        public dynamic creditsByUserId(string id)
         {
-            return creditRepo.creditsByUserId(id);
+            return creditRepo.creditsByUserId(id)
+                .Select(i => new { id = i.id, balanceOwed = i.balanceOwed, returned = i.returned, comment = i.comment, date1 = i.openDate.ToString("dddd, dd MMMM yyyy"), date2 = i.closeDate.ToString("dddd, dd MMMM yyyy") }).ToList();
         }
 
         public Credit get(int id, string idUser)
@@ -47,9 +49,11 @@ namespace FinApp.service
             creditRepo.rename(name, id, idUser);
         }
 
-        public List<FinanceOperation> historyById(int idCredit, string idUser)
+        public dynamic historyById(int idCredit, string idUser)
         {
-            return operationRepo.getByIdDepository(idCredit, idUser).Where(i => i.category == Category.Credit).ToList();
+            return operationRepo.getByIdDepository(idCredit, idUser)
+                .Where(i => i.category == Category.Credit).ToList()
+                .Select(i => new { date = i.created.ToString("U"), comment = i.comment, value = i.amountOfMoney }).ToList();
         }
 
 

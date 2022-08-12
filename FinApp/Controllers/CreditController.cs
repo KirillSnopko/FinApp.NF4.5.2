@@ -24,16 +24,14 @@ namespace FinApp.Controllers
         public ActionResult List()
         {
             var idUser = User.Identity.GetUserId();
-            var credits = creditService.creditsByUserId(idUser);
-            var response = credits.Select(i => new { id = i.id, balanceOwed = i.balanceOwed, returned = i.returned, comment = i.comment, date1 = i.openDate.ToString("dddd, dd MMMM yyyy"), date2 = i.closeDate.ToString("dddd, dd MMMM yyyy") }).ToList();
+            var response = creditService.creditsByUserId(idUser);
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Create(double value, string comment, DateTime closeDate)
         {
             string idUser = User.Identity.GetUserId();
-            Credit credit = new Credit { balanceOwed = value, returned = 0, openDate = DateTime.Now, closeDate = closeDate, comment = comment, idUser = idUser };
-            creditService.add(credit);
+            creditService.add(value, comment, closeDate, idUser);
             return Json(new { status = 200 });
         }
 
@@ -51,12 +49,10 @@ namespace FinApp.Controllers
             return Json(new { status = 200 });
         }
 
-
         public ActionResult HistoryById(int id)
         {
             var idUser = User.Identity.GetUserId();
-            var history = creditService.historyById(id, idUser);
-            var response = history.Select(i => new { date = i.created.ToString("U"), comment = i.comment, value = i.amountOfMoney }).ToList();
+            var response = creditService.historyById(id, idUser);
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
