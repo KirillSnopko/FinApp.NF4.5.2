@@ -30,8 +30,6 @@ namespace FinApp.Controllers
         public IHttpActionResult getSpendingDataCurDepCurMonth(int idDepository)
         {
             var idUser = User.Identity.GetUserId();
-           // List<FinanceOperation> financeOperations = chartsService.getSpendingDataCurDepCurMonth(idDepository, idUser);
-            //var data = financeOperations.GroupBy(i => i.category).Select(i => new { Category = Enum.GetName(typeof(Category), i.Key), Sum = i.Sum(x => x.amountOfMoney) }).ToList();
             return Json(chartsService.getSpendingDataCurDepCurMonth(idDepository, idUser));
         }
 
@@ -40,8 +38,6 @@ namespace FinApp.Controllers
         public IHttpActionResult getAddDataCurDepCurMonth(int idDepository)
         {
             var idUser = User.Identity.GetUserId();
-            //List<FinanceOperation> financeOperations = chartsService.getAddDataCurDepCurMonth(idDepository, idUser);
-           // var data = financeOperations.GroupBy(i => i.category).Select(i => new { Category = Enum.GetName(typeof(Category), i.Key), Sum = i.Sum(x => x.amountOfMoney) }).ToList();
             return Json(chartsService.getAddDataCurDepCurMonth(idDepository, idUser));
         }
 
@@ -50,8 +46,6 @@ namespace FinApp.Controllers
         public IHttpActionResult getSpendDataAllDepCurMonth()
         {
             string idUser = User.Identity.GetUserId();
-           // List<FinanceOperation> financeOperations = chartsService.getSpendDataAllDepCurMonth(idUser);
-            //var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = depositoryService.get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
             return Json(chartsService.getSpendDataAllDepCurMonth(idUser));
         }
 
@@ -60,8 +54,6 @@ namespace FinApp.Controllers
         public IHttpActionResult getAddDataAllDepCurMonth()
         {
             string idUser = User.Identity.GetUserId();
-            //List<FinanceOperation> financeOperations = chartsService.getAddDataAllDepCurMonth(idUser);
-            //var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = depositoryService.get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
             return Json(chartsService.getAddDataAllDepCurMonth(idUser));
         }
 
@@ -70,8 +62,6 @@ namespace FinApp.Controllers
         public IHttpActionResult getSpendDataAllDepAllTime()
         {
             string idUser = User.Identity.GetUserId();
-            //List<FinanceOperation> financeOperations = chartsService.getSpendDataAllDepAllTime(idUser);
-            //var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = depositoryService.get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
             return Json(chartsService.getSpendDataAllDepAllTime(idUser));
         }
 
@@ -80,8 +70,6 @@ namespace FinApp.Controllers
         public IHttpActionResult getAddDataAllDepAllTime()
         {
             string idUser = User.Identity.GetUserId();
-           // List<FinanceOperation> financeOperations = chartsService.getAddDataAllDepAllTime(idUser);
-           // var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = depositoryService.get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
             return Json(chartsService.getAddDataAllDepAllTime(idUser));
         }
     }
