@@ -35,8 +35,7 @@ namespace FinApp.Controllers
         public ActionResult GetData()
         {
             var id = User.Identity.GetUserId();
-            var data = depositoryService.depositoriesByUserId(id);
-            var response = data.Select(i => new { id = i.id, name = i.name, type = Enum.GetName(typeof(TypeDep), i.typeDep), value = i.amount, currency = Enum.GetName(typeof(TypeMoney), i.typeMoney) }).ToList();
+            var response = depositoryService.depositoriesByUserId(id);
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
@@ -44,8 +43,7 @@ namespace FinApp.Controllers
         public ActionResult GetById(int id)
         {
             var idUser = User.Identity.GetUserId();
-            Depository dep = depositoryService.get(id, idUser);
-            var response = new { id = dep.id, name = dep.name, value = dep.amount, currency = Enum.GetName(typeof(TypeMoney), dep.typeMoney) };
+            var response = depositoryService.get(id, idUser);
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
@@ -54,8 +52,7 @@ namespace FinApp.Controllers
         public ActionResult Create(TypeDep tDep, TypeMoney tMoney, string name, double amount)
         {
             var id = User.Identity.GetUserId();
-            Depository depository = new Depository { idUser = id, typeDep = tDep, typeMoney = tMoney, name = name, amount = amount };
-            depositoryService.add(depository);
+            depositoryService.add(tDep, tMoney, name, amount, id);
             return Json(new { status = 200 });
         }
 
@@ -111,8 +108,7 @@ namespace FinApp.Controllers
         public ActionResult HistoryById(int id)
         {
             var idUser = User.Identity.GetUserId();
-            var history = depositoryService.historyById(id, idUser);
-            var response = history.Select(i => new { date = i.created.ToString("dddd, dd MMMM yyyy HH:mm:ss"), category = Enum.GetName(typeof(Category), i.category), comment = i.comment, value = i.isSpending ? ("-" + i.amountOfMoney).ToString() : ("+" + i.amountOfMoney).ToString(), status = i.isSpending }).ToList();
+            var response = depositoryService.historyById(id, idUser);
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 

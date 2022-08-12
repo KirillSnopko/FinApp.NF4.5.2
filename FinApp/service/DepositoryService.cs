@@ -23,19 +23,23 @@ namespace FinApp.service
             this.operationRepo = operationRepo;
         }
 
-        public void add(Depository depository)
+        public void add(TypeDep tDep, TypeMoney tMoney, string name, double amount, string idUser)
         {
+            Depository depository = new Depository { idUser = idUser, typeDep = tDep, typeMoney = tMoney, name = name, amount = amount };
             depositoryRepo.add(depository);
         }
 
-        public List<Depository> depositoriesByUserId(string id)
+        public dynamic depositoriesByUserId(string id)
         {
-            return depositoryRepo.depositoriesByUserId(id);
+            return depositoryRepo.depositoriesByUserId(id)
+                .Select(i => new { id = i.id, name = i.name, type = Enum.GetName(typeof(TypeDep), i.typeDep), value = i.amount, currency = Enum.GetName(typeof(TypeMoney), i.typeMoney) }).ToList();
         }
 
-        public Depository get(int id, string idUser)
+        public dynamic get(int id, string idUser)
         {
-            return depositoryRepo.get(id, idUser);
+            Depository dep = depositoryRepo.get(id, idUser);
+            var response = new { id = dep.id, name = dep.name, value = dep.amount, currency = Enum.GetName(typeof(TypeMoney), dep.typeMoney) };
+            return response;
         }
 
         public void rename(string name, int id, string idUser)
@@ -48,9 +52,10 @@ namespace FinApp.service
             return depositoryRepo.count(idUser);
         }
 
-        public List<FinanceOperation> historyById(int idDepository, string idUser)
+        public dynamic historyById(int idDepository, string idUser)
         {
-            return operationRepo.getByIdDepository(idDepository, idUser);
+            return operationRepo.getByIdDepository(idDepository, idUser)
+                .Select(i => new { date = i.created.ToString("dddd, dd MMMM yyyy HH:mm:ss"), category = Enum.GetName(typeof(Category), i.category), comment = i.comment, value = i.isSpending ? ("-" + i.amountOfMoney).ToString() : ("+" + i.amountOfMoney).ToString(), status = i.isSpending }).ToList(); ;
         }
 
         // Transactions
