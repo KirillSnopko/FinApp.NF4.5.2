@@ -13,25 +13,25 @@ namespace FinApp.service
     public class ChartsService : IChartsService
     {
         private IOperationRepo operationRepo;
-        private IDepositoryService depositoryService;
+        private IDepositoryRepo depositoryRepo;
 
-        public ChartsService(IOperationRepo _operationRepo, IDepositoryService depositoryService)
+        public ChartsService(IOperationRepo _operationRepo, IDepositoryRepo depositoryRepo)
         {
             operationRepo = _operationRepo;
-            this.depositoryService = depositoryService;
+            this.depositoryRepo = depositoryRepo;
         }
 
         public dynamic getAddDataAllDepAllTime(string idUser)
         {
             List<FinanceOperation> financeOperations = operationRepo.getByIdUser(idUser).Where(i => i.isSpending == false && i.category != Category.Credit).ToList();
-            var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = depositoryService.get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
+            var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = depositoryRepo.get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
             return data;
         }
 
         public dynamic getAddDataAllDepCurMonth(string idUser)
         {
             List<FinanceOperation> financeOperations = operationRepo.getByIdUser(idUser).Where(i => i.isSpending == false && i.category != Category.Credit).Where(i => i.created.Month == DateTime.Now.Month).ToList();
-            var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = depositoryService.get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
+            var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = depositoryRepo.get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
             return data;
         }
 
@@ -45,14 +45,14 @@ namespace FinApp.service
         public dynamic getSpendDataAllDepAllTime(string idUser)
         {
             List<FinanceOperation> financeOperations = operationRepo.getByIdUser(idUser).Where(i => i.isSpending == true && i.category != Category.Credit).ToList();
-            var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = depositoryService.get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
+            var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = depositoryRepo.get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
             return data;
         }
 
         public dynamic getSpendDataAllDepCurMonth(string idUser)
         {
             List<FinanceOperation> financeOperations = operationRepo.getByIdUser(idUser).Where(i => i.isSpending == true && i.category != Category.Credit).Where(i => i.created.Month == DateTime.Now.Month).ToList();
-            var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = depositoryService.get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
+            var data = financeOperations.GroupBy(i => i.idDepository).Select(i => new { Depository = depositoryRepo.get(i.Key, idUser).name, Sum = i.Sum(x => x.amountOfMoney) }).ToList();
             return data;
         }
 
