@@ -7,7 +7,7 @@ namespace FinApp.repo
 {
     public class DbTransaction : IDisposable
     {
-        public DbContextTransaction dbContextTransaction { get; set; }
+        private DbContextTransaction dbContextTransaction;
         private FinContext finContext;
 
         public DbTransaction(FinContext finContext)
